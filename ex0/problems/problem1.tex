@@ -1,0 +1,36 @@
+
+%%% QUESTION %%%
+
+\begin{problem}{1: Definitions}
+(a) What is the definition of the gradient of a scalar function $\textit{f} : \mathbb{R}^{n} \to \mathbb{R}$? Is it a row or column vector?
+
+\medskip
+
+(b) What is the definition of the Jacobian of a function $\textit{f} : \mathbb{R}^{n} \to \mathbb{R}^{m}$? If m = 1, what is the difference between the gradient and the Jacobian?
+\end{problem}
+
+%%% SOLUTION %%%
+
+\SUBTASK{a}
+
+The definition of the gradient of a scalar function is $\nabla f(\mathbf{x}) = \begin{bmatrix}
+    \frac{\partial f}{\partial x_1} & \cdots & \frac{\partial f}{\partial x_n}
+  \end{bmatrix}^{\top}$. The result is a (column) vector field where the direction indicates maximum rate of change for \textit{f}.
+
+\medskip
+
+\SUBTASK{b}
+
+\[
+  \mathbf{J_f} = \frac{\partial\mathbf{f}}{\partial \mathbf{x}} = \begin{bmatrix}
+    \frac{\partial\mathbf{f}}{\partial  x_1} & \cdots & \frac{\partial\mathbf{f}}{\partial x_n}
+  \end{bmatrix} = \begin{bmatrix}
+    \nabla^{\top}f_1 \\ \vdots \\ \nabla ^{\top}f_m
+  \end{bmatrix} = \begin{bmatrix}
+    \frac{\partial f_1}{\partial x_1} & \cdots & \frac{\partial f_1}{\partial x_n} \\
+    \vdots & \ddots & \vdots \\
+    \frac{\partial f_m}{\partial x_1} & \cdots & \frac{\partial f_m}{\partial x_n}
+  \end{bmatrix}
+  .\]
+
+We can see that if $m=1$ then the Jacobian is a transposed version of the gradient of f. 

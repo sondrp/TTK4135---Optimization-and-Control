@@ -8,110 +8,18 @@
 \usepackage{caption}
 \usepackage[hidelinks]{hyperref}
 \setlength{\parindent}{0pt}
-\usepackage[margin=0.5in]{geometry} % Set all margins to 1 inch
+\usepackage[margin=0.5in]{geometry}
 
-
-
-% Define custom colors
-\definecolor{framecolor}{HTML}{94a3b8}
-\definecolor{bgcolor}{HTML}{cbd5e1}
-
-\newtcolorbox{problem}[2][]{
-  colback=bgcolor,
-  colframe=framecolor,
-  fonttitle=\bfseries\color{black},
-  title=Problem #2,
-  width=\textwidth,
-  #1
-}
+\input{../macros.tex}
 
 \begin{document}
 
 \input{../template/framside.tex}
 \setExerciseNumber{0}
 
-\begin{problem}{1: Definitions}
-(a) What is the definition of the gradient of a scalar function $\textit{f} : \mathbb{R}^{n} \to \mathbb{R}$? Is it a row or column vector?
-
-\medskip
-
-(b) What is the definition of the Jacobian of a function $\textit{f} : \mathbb{R}^{n} \to \mathbb{R}^{m}$? If m = 1, what is the difference between the gradient and the Jacobian?
-\end{problem}
-
-\begin{problem}{2: Linear functions}
-Let $\mathbf{f(x)} = \mathbf{Ax}$ where
-\[
-  \mathbf{A} = 
-  \begin{bmatrix}
-    a_{11} & a_{12} \\
-    a_{21} & a_{22}
-  \end{bmatrix}
-  ,\ 
-  \mathbf{x} = 
-  \begin{bmatrix}
-    x_1 \\ x_2
-  \end{bmatrix}
-  .\]
-
-(a) Use the definition and calculate $\frac{\partial\mathbf{f(x)}}{\partial\mathbf{x}}$. Is this the Jacobian or the gradient of $\mathbf{f(x)}$?
-
-\medskip
-
-(b) Can you, without doing any calculations, find $\frac{\partial\mathbf{Ax}}{\partial\mathbf{x}}$ when $\mathbf{x}$ is a 
-column vector of length \textit{n}, and $\mathbf{A}$ is a matrix of dimension $m\times n$ (i.e., \textit{m} rows and \textit{n})?
-\end{problem}
-
-\begin{problem}{3: Nonlinear/quadratic functions}
-Let $f(x,y)=\mathbf{x^{\top}Gy}$, where
-\[
-\mathbf{x} = \begin{bmatrix}
-  x_1 \\ x_2
-\end{bmatrix}
-,\ 
-\mathbf{G} = \begin{bmatrix}
-  g_{11} & g_{12} & g_{13} \\
-  g_{21} & g_{22} & g_{23} \\
-\end{bmatrix}
-,\ 
-\mathbf{y} = \begin{bmatrix}
-  y_1 \\ y_2 \\ y_3\\
-\end{bmatrix}
-.\] 
-
-(a) What is the dimensions of $f(x,y)$? Is $\nabla f(x,y)$ equal to $\frac{\partial f(x,y)}{\partial x}$ (no calculations are needed)?
-
-\medskip
-
-(b) Use the definition and calcualte $\nabla_x f(x,y)$. Then write the answer in matrix form.
-
-\medskip
-
-(c) Use the definition and calcualge $\nabla_y f(x,y)$. Then write the answer in matrix form.
-
-\medskip
-
-(d) Let $f(x) = x^{\top}\mathbf{Hx}$, where $x \in \mathbb{R}^{n}$ and $\mathbf{H} \in \mathbb{R}^{n \times n}$. Find $\nabla f(x)$ using the results from 
-the previous exercises. What will the answer be if $\mathbf{H}$ is symmetric?
-\end{problem}
-
-\begin{problem}{4: A common case: The Lagrangian}
-Given
-\[
-\mathcal{L}(x, \lambda, \mu) = xtr^{\top}\mathbf{G} + \lambda^{\top}(Cx - d) + \mu^{\top}(Ex - h)
-.\] 
-
-(a) Find $\nabla_x\mathcal{L}(x, \lambda, \mu)$.
-
-\medskip
-
-(b) Find $\nabla_{\mu}\mathcal{L}(x, \lambda, \mu)$.
-
-\medskip
-
-(c) Find $\nabla_{\lambda}\mathcal{L}(x, \lambda, \mu)$.
-\end{problem}
-
-
-
+\input{problems/problem1.tex}
+\input{problems/problem2.tex}
+\input{problems/problem3.tex}
+\input{problems/problem4.tex}
 
 \end{document}

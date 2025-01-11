@@ -1,0 +1,45 @@
+
+%%% QUESTION %%% 
+
+\begin{problem}{2: Linear functions}
+Let $\mathbf{f(x)} = \mathbf{Ax}$ where
+\[
+  \mathbf{A} =
+  \begin{bmatrix}
+    a_{11} & a_{12} \\
+    a_{21} & a_{22}
+  \end{bmatrix}
+  ,\
+  \mathbf{x} =
+  \begin{bmatrix}
+    x_1 \\ x_2
+  \end{bmatrix}
+  .\]
+
+(a) Use the definition and calculate $\frac{\partial\mathbf{f(x)}}{\partial\mathbf{x}}$. Is this the Jacobian or the gradient of $\mathbf{f(x)}$?
+
+\medskip
+
+(b) Can you, without doing any calculations, find $\frac{\partial\mathbf{Ax}}{\partial\mathbf{x}}$ when $\mathbf{x}$ is a
+column vector of length \textit{n}, and $\mathbf{A}$ is a matrix of dimension $m\times n$ (i.e., \textit{m} rows and \textit{n})?
+\end{problem}
+
+%%% SOLUTION %%%
+
+\SUBTASK{a}
+
+\[
+  \frac{\partial\mathbf{f}(\mathbf{x})}{\partial \mathbf{x}} = \frac{\partial}{\partial \mathbf{x}} \begin{bmatrix}
+    a_{11} & a_{12} \\ a_{21} & a_{22}
+  \end{bmatrix} \begin{bmatrix}
+    x_1 \\ x_2
+  \end{bmatrix} = \frac{\partial}{\partial \mathbf{x}} \begin{bmatrix}
+    a_{11}x_1 + a_{12}x_2 \\ a_{21}x_1 + a_{22}x_2
+  \end{bmatrix} = \mathbf{A}
+.\] 
+
+This is the Jacobian of $\mathbf{f}(\mathbf{x})$. It is clearly not the gradient since the result is a matrix.
+
+\SUBTASK{b}
+
+Yes, we see from \textit{(a)} that the result will be $\mathbf{A}$.

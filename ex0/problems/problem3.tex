@@ -1,0 +1,105 @@
+
+%%% QUESTION %%%
+
+\begin{problem}{3: Nonlinear/quadratic functions}
+Let $f(x,y)=\mathbf{x^{\top}Gy}$, where
+\[
+  \mathbf{x} = \begin{bmatrix}
+    x_1 \\ x_2
+  \end{bmatrix}
+  ,\
+  \mathbf{G} = \begin{bmatrix}
+    g_{11} & g_{12} & g_{13} \\
+    g_{21} & g_{22} & g_{23} \\
+  \end{bmatrix}
+  ,\
+  \mathbf{y} = \begin{bmatrix}
+    y_1 \\ y_2 \\ y_3\\
+  \end{bmatrix}
+  .\]
+
+
+\medskip
+
+\hrule
+\textbf{(a)} What is the dimensions of $f(x,y)$? Is $\nabla f(x,y)$ equal to $\frac{\partial f(x,y)}{\partial x}$ (no calculations are needed)?
+
+\medskip
+
+
+\textbf{(b)}
+Use the definition and calcualte $\nabla_x f(x,y)$. Then write the answer in matrix form.
+
+\medskip
+
+textbf{(c)} Use the definition and calculate $\nabla_y f(x,y)$. Then write the answer in matrix form.
+
+\medskip
+
+textbf{(d)} Let $f(x) = x^{\top}\mathbf{Hx}$, where $x \in \mathbb{R}^{n}$ and $\mathbf{H} \in \mathbb{R}^{n \times n}$. Find $\nabla f(x)$ using the results from
+the previous exercises. What will the answer be if $\mathbf{H}$ is symmetric?
+\end{problem}
+
+%%% SOLUTION %%%
+
+\SUBTASK{a}
+
+We can see by the dimensions of the inputs that the ouput will be a scalar value.
+Informally: $\mathbf{x}^{\top} \mathbf{G} \mathbf{y} \implies (1\times 2)(2\times 3)(3 \times 1) \implies 1$.
+
+\SUBTASK{b}
+
+\begin{align*}
+  f(\mathbf{x, y}) & =
+  \begin{bmatrix}x_1 & x_2\end{bmatrix}
+  \begin{bmatrix}
+    g_{11} & g_{12} & g_{13} \\ g_{21} & g_{22} & g_{23}
+  \end{bmatrix}
+  \begin{bmatrix}
+    y_1 \\ y_2 \\ y_3
+  \end{bmatrix}
+  \\ &=
+  \begin{bmatrix}
+    x_1g_{11} + x_2g_{21} & x_1 g_{12} + x_2 g_{22} & x_1g_{13} + x_2 g_{23}
+  \end{bmatrix}
+  \begin{bmatrix}
+    y_1 \\ y_2 \\ y_3
+  \end{bmatrix}
+  \\ &=
+  y_1(x_1g_{11}+x_2g_{21}) + y_2(x_1g_{12} + x_2 g_{22}) + y_3(x_1g_{13}+x_2g_{23})
+\end{align*}
+
+\begin{align*}
+  \nabla _{\mathbf{x}} f(\mathbf{x,y}) & =
+  \begin{bmatrix}
+    y_1g_{11}+ y_2g_{12} + y_3 g_{13} \\ y_1g_{21} + y_2 g_{22} + y_3 g_{23}
+  \end{bmatrix}
+  \\ &=
+  \begin{bmatrix}
+    g_{11} & g_{12} & g_{13} \\ g_{21} & g_{22} & g_{23}
+  \end{bmatrix}
+  \begin{bmatrix}
+    y_1 \\ y_2 \\ y_3
+  \end{bmatrix}
+  \\ &= \mathbf{Gy}
+\end{align*}
+
+\SUBTASK{c}
+
+\[
+  \nabla_y f(\mathbf{x, y}) = \begin{bmatrix}
+    x_1g_{11} + x_2g_{21} \\ x_1g_{12} + x_2g_{22} \\ x_1g_{13} + x_2g_{23}
+  \end{bmatrix}
+  = \mathbf{G^{\top}x}
+.\] 
+
+\SUBTASK{d}
+
+\[
+  \nabla _x f(\mathbf{x}) = \nabla _x(\mathbf{x}^{\top}Hx) = \mathbf{Hx} + \mathbf{H^{\top}x}
+.\] 
+
+When $\mathbf{H}$ is symmetric: 
+\[
+  \nabla _x f(\mathbf{x}) = \mathbf{Hx} + \mathbf{H^{\top}x} = \mathbf{Hx} + \mathbf{Hx} = 2\mathbf{Hx}
+.\] 
