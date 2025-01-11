@@ -1,0 +1,13 @@
+\definecolor{framecolor}{HTML}{94a3b8}
+\definecolor{bgcolor}{HTML}{cbd5e1}
+
+\newtcolorbox{problem}[2][]{
+  colback=bgcolor,
+  colframe=framecolor,
+  fonttitle=\bfseries\color{black},
+  title=Problem #2,
+  width=\textwidth,
+  #1
+}
+
+\newcommand{\SUBTASK}[1]{\medskip\medskip\textbf{\large (#1)}}
