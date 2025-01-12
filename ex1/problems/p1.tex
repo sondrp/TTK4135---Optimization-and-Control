@@ -4,7 +4,7 @@
 Consider
 \[
   \min x_1 + 2x_2 \qquad s.t. \qquad 2 - x_1^2-x_2^2 \geq 0 ,\ x_2 \geq 0
-.\] 
+  .\]
 
 (a) Find the optimal point by inspecting the feasible region and the objective function.
 
@@ -14,17 +14,83 @@ Consider
 
 \medskip
 
-(c) Illustrate the gradients of the active constraints and the objective function at the solution. 
+(c) Illustrate the gradients of the active constraints and the objective function at the solution.
 
 \medskip
 
-(d) Explain why te Lagrange multipliers are positive. 
+(d) Explain why te Lagrange multipliers are positive.
 
 \medskip
 
-(e) Is this problem a convex problem? 
+(e) Is this problem a convex problem?
 
 \end{problem}
 
-
 %%% SOLUTION %%%
+
+\SUBTASK{a}
+
+Here is a figure showing the feasible region in blue, f and $\nabla f$. From $\nabla f$ we can see that $x^{*} = \begin{bmatrix}
+  -\sqrt{2}, 0
+\end{bmatrix}^{\top}$ is the optimal point.
+
+% Figure for 1a
+\begin{center}
+  \definecolor{ffqqtt}{rgb}{1.,0.,0.2}
+  \definecolor{qqzzff}{rgb}{0.,0.6,1.}
+  \begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=2.0cm,y=2.0cm]
+    \begin{axis}[
+        x=2.0cm,y=2.0cm,
+        axis lines=middle,
+        xmin=-3.0,
+        xmax=3.0,
+        ymin=-0.5,
+        ymax=2.0,
+        xtick={-3.0,-2.0,...,3.0},
+        ytick={-0.0,1.0,...,2.0},]
+      \begin{scriptsize}
+        \draw [fill=ffqqtt] (-1.4142135623730951,0.) circle (2.5pt);
+        \draw[color=ffqqtt] (-0.4965675607624609,-0.03826124558724378) node {$x = (-1.41, 0)$};
+        \draw[color=black] (-2.890471191856766,2.387244818114715) node {$f$};
+        \draw[color=black] (0.5226191336638275,1.5418729978668009) node {$\nabla$f};
+      \end{scriptsize}
+      \draw [->,line width=2.pt] (0.,1.) -- (0.4,1.8);
+      \draw [line width=2.pt,domain=-3.:3.] plot(\x,{(--1.-0.5*\x)/1.});
+      \clip(-3.,-0.5) rectangle (3.,2.);
+      \clip (axis cs:-3,0) rectangle (axis cs:3,2.0);
+      \clip (0,0) circle(2.8284271247461903cm);
+      \draw[line width=2.pt,color=qqzzff,fill=qqzzff,fill opacity=0.15000000596046448](-3.056385304902906,2.)--(-3.056385304902906,-0.0027082251095277743)--(4.544061207020268,-0.0027082251095277743)--(4.544061207020268,2.);
+      \draw [rotate around={0.:(0.,0.)},line width=2.pt,color=qqzzff,fill=qqzzff,fill opacity=0.15000000596046448] (0.,0.) ellipse (2.8284271247461903cm and 2.8284271247461903cm);
+    \end{axis}
+  \end{tikzpicture}
+\end{center}
+
+\SUBTASK{b}
+
+The Lagrangian is $\mathcal{L}(\mathbf{x, \lambda}) = x_1 + x_2 - \lambda_1(2 - x_1^2 - x_2^2) - \lambda_2(x_2)$.
+
+The KKT-conditions are in this case \begin{align}
+  \nabla _x \mathcal{L}(\mathbf{x, \lambda}) &= 
+  \begin{bmatrix}
+    1 \\ 2  
+  \end{bmatrix}
+  + \lambda_1
+  \begin{bmatrix}
+    2x_1 \\ 2x_2
+  \end{bmatrix}
+  - \lambda_2
+  \begin{bmatrix}
+    0 \\ 1
+  \end{bmatrix}
+  = 0
+  \\
+  c_1(\mathbf{x}) &= 2-x_1^2 - x_2^2 \geq 0 \\
+  c_2(\mathbf{x}) &= x_2 \geq 0 \\
+  \mathbf{\lambda} \geq 0 \\
+  \lambda_1c_1(\mathbf{x}) &= 0 \\
+  \lambda_2c_2(\mathbf{x}) &= 0
+\end{align}.
+
+(2), (3), (5), and (6) are satisified since both conditions are binding ($c_1(\mathbf{x^*}) = c_2(\mathbf{x^*}) = 0$).
+
+(1) and (4) are satsified when $\lambda_1 = \frac{\sqrt{2}}{4}$ and $\lambda_2 = 2$
