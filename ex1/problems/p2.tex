@@ -4,7 +4,7 @@
 Consider
 \[
   \min 2x_1 + x_2 \qquad s.t. \qquad x_1^2 + x_2^2 - 2 = 0
-.\] 
+  .\]
 
 (a) Find all points which satisfy the KKT conditions
 
@@ -22,7 +22,7 @@ Consider
 
 \medskip
 
-(e) Check the 2nd order conditions for the KKT points. 
+(e) Check the 2nd order conditions for the KKT points.
 
 \medskip
 
@@ -32,3 +32,90 @@ Consider
 
 
 %%% SOLUTION %%%
+
+\SUBTASK{a}{KKT points}
+
+The KKT points must satisfy $\nabla _x \mathcal{L}(\mathbf{x}, \lambda) = 0$.
+
+\begin{align*}
+  \mathcal{L}(\mathbf{x}, \lambda)           & = 2x_1 + x_2 - \lambda(x_1^2 + x_2^2 - 2)                         \\
+  \nabla _x \mathcal{L}(\mathbf{x}, \lambda) & =
+  \begin{bmatrix}
+    2 - 2\lambda x_1 \\
+    1 - 2\lambda x_2
+  \end{bmatrix} = 0                                                                                              \\
+  \implies \lambda                           & = \frac{1}{x_1} = \frac{1}{2x_2}                                  \\
+  \implies x_2                               & = \pm \sqrt{ \frac{2}{5}},\  x_1 = 2x_2 = \pm \sqrt{ \frac{8}{5}}
+\end{align*}
+
+The KKT points are $\mathbf{x^{(1)}} = \M{\sqrt{ \frac{8}{5}} & \sqrt{ \frac{2}{5}}}^{\top}$ and $\mathbf{x^{(2)}} = \M{-\sqrt{ \frac{8}{5}} & -\sqrt{ \frac{2}{5}}}^{\top}$
+
+\SUBTASK{b}{Gradients}
+
+The gradiants are
+
+\begin{align*}
+  \nabla _x f(\mathbf{x}) = \M{2                          \\ 1} &,\
+  \nabla c_1(\mathbf{x}) = \M{2x_1                        \\ 2x_2} \\
+  \nabla c_1(\mathbf{x^{(1)}}) = \M{\sqrt{ \frac{16}{5}}  \\ \sqrt{ \frac{4}{5}}} &,\
+  \nabla c_1(\mathbf{x^{(2)}}) = \M{-\sqrt{ \frac{16}{5}} \\ -\sqrt{ \frac{4}{5}}}
+\end{align*}
+
+\begin{center}
+  \definecolor{qqttcc}{rgb}{0.,0.2,0.8}
+  \definecolor{uuuuuu}{rgb}{0.26666666666666666,0.26666666666666666,0.26666666666666666}
+  \definecolor{ududff}{rgb}{0.30196078431372547,0.30196078431372547,1.}
+  \begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=2.0cm,y=2.0cm]
+    \begin{axis}[
+        x=2.0cm,y=2.0cm,
+        axis lines=middle,
+        xmin=-3.5,
+        xmax=3.5,
+        ymin=-1.8,
+        ymax=2.0,
+        xtick={-3.5,-3.0,...,3.5},
+        ytick={-1.5,-1.0,...,2.0},]
+      \clip(-3.5,-1.8) rectangle (3.5,2.);
+      \draw [line width=2.pt,color=qqttcc] (0.,0.) circle (2.8284271247461903cm);
+      \draw [->,line width=2.pt] (1.2649110640673518,0.6324555320336759) -- (3.264911064067352,1.632455532033676);
+      \draw [->,line width=2.pt] (1.2649110640673518,0.6324555320336759) -- (3.0537654460671835,1.5268827230335917);
+      \draw [->,line width=2.pt] (-1.2649110640673518,-0.6324555320336759) -- (0.7350889359326482,0.3675444679663241);
+      \draw [->,line width=2.pt] (-1.2649110640673518,-0.6324555320336759) -- (-3.0537654460671835,-1.5268827230335917);
+      \begin{scriptsize}
+        \draw [fill=ududff] (1.2649110640673518,0.6324555320336759) circle (2.5pt);
+        \draw[color=ududff] (1.3306321521581599,0.8012016339412135) node {$\mathbf{x^{(1)}}$};
+        \draw [fill=uuuuuu] (-1.2649110640673518,-0.6324555320336759) circle (2.0pt);
+        \draw[color=uuuuuu] (-1.1988993296780108,-0.4774621023352682) node {$\mathbf{x^{(2)}}$};
+        \draw[color=black] (2.377654340610494,1.3756737473407923) node {$\nabla$f};
+        \draw[color=black] (2.136746580435621,1.255219917111848) node {$\nabla c(\mathbf{x^{(1)}})$};
+        \draw[color=black] (-0.6429583446590723,-0.5423218570739303) node {$\nabla$f};
+        \draw[color=black] (-2.0884049057083125,-1.0334028572380864) node {$\nabla c(\mathbf{x^{(2)}})$};
+      \end{scriptsize}
+    \end{axis}
+  \end{tikzpicture}
+\end{center}
+
+\SUBTASK{c}{Lagrange multipliers}
+
+We see that $\lambda^{(1)} = \frac{1}{x_1} = \frac{1}{\sqrt{ \frac{8}{5}}} = 0.79$ and $\lambda^{(2)} = -0.79$. The sign of the lagrange multiplier does however not 
+matter as much in this problem because of the equality constraint. If we solved the equivalent problem with $c_1^{'}(\mathbf{x}) = -c_1(\mathbf{x})$, the lagrange multiplier
+would have changed sign for the two points. 
+
+\SUBTASK{d}{The solution}
+
+$\mathbf{x^{(1)}}$ maximises f. We can see this from the illustration, where the constraint gradient points in the same direction as the objective function gradient. 
+$\mathbf{x^{(2)}}$ is a local solution to the problem, since the constraint gradient is opposite to the objective gradient.
+
+\SUBTASK{e}{2nd order conditions}
+
+For this we need the Hessian. $\nabla _{xx}^2\mathcal{L}(\mathbf{x}, \lambda) = \M{-2\lambda & 0 \\ 0 & 2\lambda}$. 
+We see that $\nabla _{xx}^2\mathcal{L}(\mathbf{x^{(1)}}, \lambda^{(1)}) = \M{-\sqrt{ \frac{16}{5}} & 0 \\ 0 & -\sqrt{ \frac{4}{5}}}$ is negative semi-definite. This means that 
+$\mathbf{x^{(1)}}$ is a local maximum.
+$\nabla _{xx}^2\mathcal{L}(\mathbf{x^{(2)}}, \lambda^{(2)}) = \M{\sqrt{ \frac{16}{5}} & 0 \\ 0 & \sqrt{ \frac{4}{5}}}$ is positive semi-definite, a local minimum.
+
+Here, $d^{\top}\nabla _{xx}^2\mathcal{L}(\mathbf{x^{(2)}}, \lambda^{(2)})d > 0,\ d > 0$
+
+
+\SUBTASK{f}{Convexity}
+
+This is not a convex problem, because the feasible region is not convex. A line between any distinct points would leave the feasible region.

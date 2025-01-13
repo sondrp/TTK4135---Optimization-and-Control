@@ -18,7 +18,7 @@ Consider
 
 \medskip
 
-(d) Explain why te Lagrange multipliers are positive.
+(d) Explain why the Lagrange multipliers are positive.
 
 \medskip
 
@@ -28,11 +28,11 @@ Consider
 
 %%% SOLUTION %%%
 
-\SUBTASK{a}
+\SUBTASK{a}{Optimal point}
 
 Here is a figure showing the feasible region in blue, f and $\nabla f$. From $\nabla f$ we can see that $x^{*} = \begin{bmatrix}
-  -\sqrt{2}, 0
-\end{bmatrix}^{\top}$ is the optimal point.
+    -\sqrt{2}, 0
+  \end{bmatrix}^{\top}$ is the optimal point.
 
 % Figure for 1a
 \begin{center}
@@ -65,32 +65,107 @@ Here is a figure showing the feasible region in blue, f and $\nabla f$. From $\n
   \end{tikzpicture}
 \end{center}
 
-\SUBTASK{b}
+\SUBTASK{b}{KKT conditions}
 
-The Lagrangian is $\mathcal{L}(\mathbf{x, \lambda}) = x_1 + x_2 - \lambda_1(2 - x_1^2 - x_2^2) - \lambda_2(x_2)$.
 
 The KKT-conditions are in this case \begin{align}
-  \nabla _x \mathcal{L}(\mathbf{x, \lambda}) &= 
-  \begin{bmatrix}
-    1 \\ 2  
-  \end{bmatrix}
-  + \lambda_1
-  \begin{bmatrix}
-    2x_1 \\ 2x_2
-  \end{bmatrix}
-  - \lambda_2
-  \begin{bmatrix}
-    0 \\ 1
-  \end{bmatrix}
-  = 0
-  \\
-  c_1(\mathbf{x}) &= 2-x_1^2 - x_2^2 \geq 0 \\
-  c_2(\mathbf{x}) &= x_2 \geq 0 \\
-  \mathbf{\lambda} \geq 0 \\
-  \lambda_1c_1(\mathbf{x}) &= 0 \\
-  \lambda_2c_2(\mathbf{x}) &= 0
+  \nabla _x \mathcal{L}(\mathbf{x, \lambda}) & =0                       \\
+  c_1(\mathbf{x})                            & = 2-x_1^2 - x_2^2 \geq 0 \\
+  c_2(\mathbf{x})                            & = x_2 \geq 0             \\
+  \mathbf{\lambda} \geq 0                                               \\
+  \lambda_1c_1(\mathbf{x})                   & = 0                      \\
+  \lambda_2c_2(\mathbf{x})                   & = 0
 \end{align}.
+
+Use the Lagrangian to find $\mathbf{\lambda}$:
+
+\begin{align*}
+  \mathcal{L}(\mathbf{x, \lambda})             & = x_1 + 2x_2 - \lambda_1(2-x_1^2 - x_2^2) - \lambda_2(x_2) \\
+  \nabla _x \mathcal{L}(\mathbf{x, \lambda})   & =
+  \begin{bmatrix}
+    1 + 2x_1\lambda_1            \\
+    1 + 2x_2\lambda_2 -\lambda_2 \\
+  \end{bmatrix}                                                                              \\
+  \nabla _x \mathcal{L}(\mathbf{x^*, \lambda}) & =
+  \begin{bmatrix}
+    1 - 2\sqrt{2}\lambda_1 \\
+    2 - \lambda_2
+  \end{bmatrix}                                                                                    \\
+  \implies \mathbf{\lambda^*}                  & = \begin{bmatrix}
+                                                     \frac{1}{2\sqrt{2}} & 2
+                                                   \end{bmatrix}^{\top}
+\end{align*}
+
+This $\mathbf{\lambda^*}$ satisfies (1) and (4).
 
 (2), (3), (5), and (6) are satisified since both conditions are binding ($c_1(\mathbf{x^*}) = c_2(\mathbf{x^*}) = 0$).
 
-(1) and (4) are satsified when $\lambda_1 = \frac{\sqrt{2}}{4}$ and $\lambda_2 = 2$
+
+\SUBTASK{c}{Gradients}
+
+The gradients are $\nabla f(\mathbf{x^*}) =
+  \begin{bmatrix}
+    1 \\ 2
+  \end{bmatrix}$, $\nabla c_1(\mathbf{x^*}) =
+  \begin{bmatrix}
+    -2(-2\sqrt{2}) \\ -2(0)
+  \end{bmatrix} =
+  \begin{bmatrix}
+    4\sqrt{2} \\ 0
+  \end{bmatrix}$,
+and
+$\nabla c_2(\mathbf{x^*}) =
+  \begin{bmatrix}
+    0 \\ 1
+  \end{bmatrix}$. Illustrated at $\mathbf{x^*} = \begin{bmatrix}
+    -\sqrt{2} \\ 0
+  \end{bmatrix}$:
+
+% Gradient illustration
+\begin{center}
+  \definecolor{qqqqff}{rgb}{0.,0.,1.}
+  \definecolor{ududff}{rgb}{0.30196078431372547,0.30196078431372547,1.}
+  \begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=2.0cm,y=2.0cm]
+    \begin{axis}[
+        x=2.0cm,y=2.0cm,
+        axis lines=middle,
+        xmin=-2.0,
+        xmax=5.0,
+        ymin=-1.5,
+        ymax=2.5,
+        xtick={-2.0,-1.5,...,5.0},
+        ytick={-1.5,-1.0,...,2.5},]
+      \clip(-2.,-1.5) rectangle (5.,2.5);
+      \draw [->,line width=2.pt] (-1.4142135623730951,0.) -- (-0.41421356237309515,2.);
+      \draw [->,line width=2.pt] (-1.4142135623730951,0.) -- (4.242640687119286,0.);
+      \draw [->,line width=2.pt] (-1.4142135623730951,0.) -- (-1.4142135623730951,1.);
+      \draw [rotate around={0.:(0.,0.)},line width=2.pt,color=qqqqff,fill=qqqqff,fill opacity=0.20000000298023224] (0.,0.) ellipse (2.8284271247461903cm and 2.8284271247461903cm);
+      \begin{scriptsize}
+        \draw[color=ududff] (-1.352018023372251,0.16807795339356546) node {$A$};
+        \draw[color=black] (-0.8353306809686312,1.6904596713997746) node {$\nabla$f};
+        \draw[color=black] (1.632774034977232,0.2280505665271434) node {$\nabla c_1$};
+        \draw[color=black] (-1.8917717649903183,0.6063393570620196) node {$\nabla c_2$};
+      \end{scriptsize}
+    \end{axis}
+  \end{tikzpicture}
+\end{center}
+
+\SUBTASK{d}{Lagrange multipliers}
+
+The lagrange multipliers are both positive, because the objective function would improve by should the constraints be less strict. The value of the multipliers 
+indicate how much the objective function would improve should the restrictions be extended in the direction of their negative gradient. 
+
+\SUBTASK{e}{Convexity}
+
+This is a convex problem because (i) the objective function is linear (which means it is convex and concave), and (ii) because the feasible region is convex.
+The convexity of the feasible region is easy to see, and can also be show by finding the hessian for $c_1$: 
+
+\[
+  \nabla _{xx}^2\mathcal{L}(\mathbf{x, \lambda^*}) =
+  \begin{bmatrix}
+    2\lambda_1 & 0 \\ 0 & 2\lambda_2
+  \end{bmatrix}
+.\] 
+
+Since $\mathbf{\lambda} \geq 0$, the Hessian is positive semi-definite, which means the region is convex. $c_1(\mathbf{x})$ is also convex because it is linear. 
+

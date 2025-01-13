@@ -1,8 +1,41 @@
 %%% QUESTION %%%
 
 \begin{problem}{4: Find optimizers}
-  Find the \textit{maxima} of the function $f(x) = x_1x_2$ over the unit disc defined by the inequality constraint $x_1^2 + x_2^2 = 1$. Illustrate the gradients of the 
-  active constraint and the objective function at the optimal points.
+Find the \textit{maxima} of the function $f(x) = x_1x_2$ over the unit disc defined by the inequality constraint $x_1^2 + x_2^2 = 1$. Illustrate the gradients of the
+active constraint and the objective function at the optimal points.
 \end{problem}
 
 %%% SOLUTION %%%
+
+\begin{align*}
+  \mathcal{L}(\mathbf{x}, \lambda)        & = x_1x_2 - \lambda_1(x_1^2 + x_2^2-1)                   \\
+  \nabla \mathcal{L}(\mathbf{x}, \lambda) & = \M{x_2 -2\lambda x_1                                  \\ x_1 - 2\lambda x_2 \\ -x_1^2 -x_2^2 + 1} = 0 \\
+  \implies x_1                            & = x_2 = \pm \frac{1}{\sqrt{2}},\  \lambda = \frac{1}{2}
+\end{align*}
+
+\begin{center}
+  \begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=2.0cm,y=2.0cm]
+    \begin{axis}[
+        x=2.0cm,y=2.0cm,
+        axis lines=middle,
+        xmin=-2.2,
+        xmax=2.2,
+        ymin=-2.2,
+        ymax=2.2,
+        xtick={-2.0,-1.0,...,2.0},
+        ytick={-2.0,-1.0,...,2.0},]
+      \clip(-2.2,-2.2) rectangle (2.2,2.2);
+      \draw [line width=2.pt] (0.,0.) circle (2.cm);
+      \draw [->,line width=2.pt] (0.7071067811865475,0.7071067811865475) -- (1.414213562373095,1.414213562373095);
+      \draw [->,line width=2.pt] (-0.7071067811865475,-0.7071067811865475) -- (-1.414213562373095,-1.414213562373095);
+      \draw [->,line width=2.pt] (0.7071067811865475,0.7071067811865475) -- (2.1213203435596424,2.1213203435596424);
+      \draw [->,line width=2.pt] (-0.7071067811865475,-0.7071067811865475) -- (-2.1213203435596424,-2.1213203435596424);
+      \begin{scriptsize}
+        \draw[color=black] (1.0637954312887226,0.9162861268834652) node {$\nabla$f};
+        \draw[color=black] (-0.961618466685309,-1.1309820687316112) node {$\nabla$f};
+        \draw[color=black] (1.6466483515690196,1.397139155035049) node {$\nabla$c};
+        \draw[color=black] (-1.3550441878745096,-1.3714085828074032) node {$\nabla$c};
+      \end{scriptsize}
+    \end{axis}
+  \end{tikzpicture}
+\end{center}

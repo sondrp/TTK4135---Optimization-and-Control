@@ -3,16 +3,16 @@
 \begin{problem}{3: Second-order conditions}
 Consider
 \[
-  \min_{x \in \mathbb{R}^{2}} f(x) = -2x_1 + x_2 \qquad s.t. \qquad 
+  \min_{x \in \mathbb{R}^{2}} f(x) = -2x_1 + x_2 \qquad s.t. \qquad
   \left\{
-    \begin{aligned}
-      c_1(x) &= (1-x_1)^2 - x_2 \geq 0 \\
-      c_2(x) &= x_2 + 0.25x_1^2 - 1 \geq 0
-    \end{aligned}
-    \right
-.\] 
+  \begin{aligned}
+    c_1(x) & = (1-x_1)^3 - x_2 \geq 0     \\
+    c_2(x) & = x_2 + 0.25x_1^2 - 1 \geq 0
+  \end{aligned}
+  \right
+  .\]
 
-The optimal solution is $x^{*} = (0, 1)^{\top}$, where both constraints are active. 
+The optimal solution is $x^{*} = (0, 1)^{\top}$, where both constraints are active.
 
 \medskip
 
@@ -35,3 +35,94 @@ The optimal solution is $x^{*} = (0, 1)^{\top}$, where both constraints are acti
 
 
 %%% SOLUTION %%%
+
+\SUBTASK{a}{LICQ conditions}
+
+To check if the LICQ conditions hold, we see if the constraint gradients are linearly independent.
+
+\begin{align*}
+  \nabla c_1(\mathbf{x})                        & = \M{3(1-x_1)^2(-1)                                              \\ -1} \\
+  \nabla c_2(\mathbf{x})                        & = \M{0.5x_1                                                      \\ 1} \\
+  rank \left(\M{\nabla c_1(\mathbf{x^*}^{\top}) & \nabla c_2(\mathbf{x^*})^{\top}}\right) & = rank\left(\M{-3 & -1 \\ 0 & 1}\right) = 2
+\end{align*}
+which means that LICQ conditions are satisifed.
+
+\SUBTASK{b}{KKT}
+
+Yes, they are satisfied with $\lambda^* = \M{ \frac{2}{3} & \frac{5}{3}}^{\top}$:
+
+\begin{align*}
+  \mathcal{L}(\mathbf{x, \lambda})              & = -2x_1 + x_2 - \lambda_1((1-x_2)^3-x_2) - \lambda_2(x_2 + 0.25x_1^2-1) \\
+  \nabla _x\mathcal{L}(\mathbf{x^*, \lambda^*}) & = \M{-2 + \lambda_1^* -3(1-x_1^*)^2 -0.5\lambda_2^*x_1^*                \\ 1 + \lambda_1^*-\lambda_2^*} \\
+                                                & = \M{-2+ \frac{2}{3} \times 3(1-0)^3                                    \\ 1 + \frac{2}{3}- \frac{5}{3}} = \underline{0} \\
+  c_1(\mathbf{x^*})                             & = c_2(\mathbf{x^*}) = 0 \implies
+  \left\{
+  \begin{aligned}
+    c_1(\mathbf{x^*})  \geq 0        \\
+    c_2(\mathbf{x^*})  \geq 0        \\
+    \lambda_1^*c_1(\mathbf{x^*}) = 0 \\
+    \lambda_2^*c_2(\mathbf{x^*}) = 0
+  \end{aligned}
+  \right.
+\end{align*}
+
+And of course, $\mathbf{\lambda}  \geq 0$, satisfying all the KKT conditions.
+
+\SUBTASK{c}{Directions}
+
+Not really sure how to do this in general, but finding tangents to the constraint gradients was my strategy here.
+$\nabla c_1(\mathbf{x^*}) = \M{-1 & -1}^{\top}$ and $\nabla c_2(x^*) = \M{0 & 1}^{\top}$. The tangents are $\M{-1 & 0}^{\top}$ and $\M{-1 & 3}^{\top}$. Looking at
+a drawing was the only reasonable way to find them. Anyway here are all the directions between these constraint tangents:
+
+\[
+  \mathcal{F}(x^*) = \left\{
+  t\alpha \M{-1 \\ 3} + t(1-\alpha)\M{-1 \\ 0}
+  \right\},\  \alpha\in \M{0,1},\ t  \geq 0
+.\]
+
+$\mathcal{F}$ creates a convex combination of the vectors u and v in the figure below.
+
+\begin{center}
+  \definecolor{ccqqqq}{rgb}{0.8,0.,0.}
+  \definecolor{qqqqff}{rgb}{0.,0.,1.}
+  \begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=2.0cm,y=2.0cm]
+    \begin{axis}[
+        x=2.0cm,y=2.0cm,
+        axis lines=middle,
+        xmin=-1.2,
+        xmax=1.2,
+        ymin=-0.3,
+        ymax=2.4,
+        xtick={-1.0,0.0,...,1.0},
+        ytick={-0.0,1.0,...,2.0},]
+      \clip(-1.2,-0.3) rectangle (1.2,2.4);
+      \draw [samples=50,rotate around={-180.:(0.,1.)},xshift=0.cm,yshift=2.cm,line width=2.pt,color=qqqqff,domain=-8.0:8.0)] plot (\x,{(\x)^2/2/2.0});
+      \draw [->,line width=2.pt] (0.,1.) -- (-1.,1.);
+      \draw [->,line width=2.pt] (0.,1.) -- (-0.3,1.9);
+      \draw[line width=2.pt,color=ccqqqq,smooth,samples=100,domain=-1.2:1.2] plot(\x,{1-3*(\x)+3*(\x)^(2)-(\x)^(3)});
+      \begin{scriptsize}
+        \draw[color=qqqqff] (-3.8652338775539654,-2.9412533925371713) node {$c_2$};
+        \draw[color=black] (-0.5135942013808384,1.101704669389708) node {$v$};
+        \draw[color=black] (-0.2217019759539961,1.4243219688214919) node {$u$};
+        \draw[color=ccqqqq] (-0.40093404419854833,2.76600026169653) node {$f$};
+      \end{scriptsize}
+    \end{axis}
+  \end{tikzpicture}
+\end{center}
+
+To find $\mathcal{C}(\mathbf{x^*})$, we need to find $\mathbf{d}$ such that $\nabla c_1(\mathbf{x^*})^{\top}\mathbf{d} = 0$ and $\nabla c_2(\mathbf{x^*})^{\top}\mathbf{d} = 0$.
+
+We have the gradients from earlier, so 
+
+\begin{align*}
+  \M{-3 & -1}\M{d_1 \\ d_2} &= 0 \\
+  \M{0 & 1}\M{d_1 \\ d_2} &= 0 \\
+  \implies \mathbf{d} &= \mathbf{0} \\
+  \mathcal{C}(\mathbf{x^*}) &= {\mathbf{0}}
+\end{align*}
+
+\SUBTASK{d}{Second order conditions}
+
+Yes, the necessary condition is satisifed, $\mathbf{d}^{\top}\nabla _{xx}^2\mathcal{L}(\mathbf{x^*, \lambda^*})\mathbf{d} = \M{0 & 0}\nabla _{xx}^2\mathcal{L}(\mathbf{x^*, \lambda^*})\M{0 \\ 0} = 0$.
+
+The sufficient condition is also satisfied, because there are no $\mathbf{d}\in \mathcal{C}(\mathbf{x^*})$ where $\mathbf{d} > \mathbf{0}$
