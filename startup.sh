@@ -23,7 +23,7 @@ cat <<EOF > "$folder_name/Ex$ex_num.tex"
 \\setlength{\\parindent}{0pt}
 \\usepackage[margin=0.5in]{geometry}
 
-\\input{../macros.tex}
+\\input{../../macros.tex}
 
 \\begin{document}
 
