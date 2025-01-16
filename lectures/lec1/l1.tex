@@ -1,0 +1,194 @@
+\documentclass{article}
+
+\input{../../preamble.tex}
+
+\Lecture{Lecture 1: Introduction to optimization}{January 9, 2025}
+
+\begin{document}
+
+\maketitle
+
+Goals for the course:
+
+\begin{itemize}
+  \item Important consepts and theory in optimization
+  \item Formulate engineering problems as mathematical optimization problem
+  \item Solve the problems numerically
+  \item Applications of optimization in control engineering - model predictive control
+\end{itemize}
+
+Optimization problems show up all over the place. That makes this course one of the most useful
+we take (according to the lecturer).
+
+\subheader{Optimization}
+
+Includes tools to find the best solution to a given task, formulated as a mathematical problem. Most problems of interest can
+only be solved using numerical methods - \textit{numerical optimization}. This field of study builds
+on multi-variable calculus, numerical linear algebra, optimization theory and more.
+Optimization problems are common in finance, operations research, control engineering and machine learning.
+This course focuses on the optimization problems that show up in control applications: Model predictive control.
+
+\medskip
+
+A ``best solution' is measured using an objective function $\textit{f}$. An optimal solution is a legal input to this function
+that is ``better' than all other legal inputs. ``Better' might mean lower or higher than other outputs, depending on the type of problem we are solving. The convention
+is to only look at minimization problems, because a maximization problem can easily be converted. $\max f(\mathbf{x}) = \min -f(\mathbf{x})$
+The objective function is a scalar function that takes a vector input.
+
+\paragraph{Conditions} is an important concept for determining if a candidate solution is or is not optimal. We have two types of conditions:
+necessary and sufficient. Should a candidate solution $\mathbf{x}$ fail to meet the necessary conditions, we can conclude that $\mathbf{x}$ is \underline{not} an optimal solution. If a candidate solution meets the sufficient conditions, we can conclude that $\mathbf{x}$ is the optimal solution.
+Sufficient conditions clearly give us more information, but they are actually often not as useful. Necessary conditions are often much easier to check.
+
+\paragraph{Unconstrained optimization} looks like $\min_{\mathbf{x}\in \mathbb{R}^{n}} f(\mathbf{x})$, where f is twice differentiable.
+The necessary conditions are then
+$f'(\mathbf{x^*}) = 0$
+and
+$f''(\mathbf{x^*}) \geq 0$. The sufficient condition for unconstrained optimization is
+$f''(\mathbf{x^*}) > 0$. This is something that we learn early in calculus, but not framed as a optimization problem. Least squares is also a
+unconstrained optimization problem.
+
+\paragraph{Constrained optimization problems} adds constraints to the previous definition. Now we get
+
+\[
+  \min_{\mathbf{x} \in \mathbb{R}^{n}} f(\mathbf{x}) \qquad \text{s.t.} \qquad
+  \begin{aligned}
+    c_i(\mathbf{x}) & = 0, \quad i \in \mathcal{E}    \\
+    c_i(\mathbf{x}) & \geq 0, \quad i \in \mathcal{I}
+  \end{aligned}
+\]
+
+Here we have equality and inequality constraints. We keep track of the indices of the constraints. The area
+enclosed by the constraints is called the feasible region, with symbol $\Omega$. The points here are the possible solutions.
+Here we choose to define the inequality constraints with greater-than 0 functions.
+
+\paragraph{Linear programming} is a special case of constraint optimization where the objective function and
+constraints are all linear. These types of problems are easier to solve.
+
+\[
+  \min_{\mathbf{x} \in \mathbb{R}^{n}} c^{\top}\mathbf{x} \qquad s.t. \qquad
+  \begin{aligned}
+    a_i ^{\top}\mathbf{x} & = b_i,\ i\in \mathcal{E}    \\
+    a_i^{\top}\mathbf{x}  & \geq b_i,\ i\in \mathcal{I}
+  \end{aligned}
+  .\]
+
+% Big blue area
+\begin{center}
+  \definecolor{uuuuuu}{rgb}{0.26666666666666666,0.26666666666666666,0.26666666666666666}
+  \definecolor{qqzzff}{rgb}{0.,0.6,1.}
+  \begin{tikzpicture}[line cap=round,line join=round,>=triangle 45,x=2.0cm,y=2.0cm]
+    \begin{axis}[
+        x=2.0cm,y=2.0cm,
+        axis lines=middle,
+        xmin=-0.15,
+        xmax=6.513716114150047,
+        ymin=-0.1,
+        ymax=5.1,
+        xtick={-0.0,1.0,...,6.0},
+        ytick={-1.0,...,6.0},]
+      \clip(-0.6953520238939495,-2.7428136243556667) rectangle (6.513716114150047,6.151093384477691);
+      \fill[line width=2.pt,color=qqzzff,fill=qqzzff,fill opacity=0.10000000149011612] (1.5668690926884534,0.9145082752113602) -- (3.4038125206324303,1.1120015733320245) -- (3.7836319694702114,2.9200673759381433) -- (2.1814298704962356,3.840020197724419) -- (0.8113950676461139,2.6005165070285936) -- cycle;
+      \draw [line width=0.5pt,color=qqzzff] (3.4038125206324303,1.1120015733320245)-- (3.7836319694702114,2.9200673759381433);
+      \draw [line width=0.5pt,color=qqzzff] (3.7836319694702114,2.9200673759381433)-- (2.1814298704962356,3.840020197724419);
+      \draw [line width=0.5pt,color=qqzzff] (2.1814298704962356,3.840020197724419)-- (0.8113950676461139,2.6005165070285936);
+      \draw [line width=0.5pt,color=qqzzff] (0.8113950676461139,2.6005165070285936)-- (1.5668690926884534,0.9145082752113602);
+      \draw [line width=0.5pt,domain=-0.6953520238939495:6.513716114150047] plot(\x,{(--5.-2.*\x)/1.});
+      \draw [line width=0.5pt,domain=-0.6953520238939495:6.513716114150047] plot(\x,{(--6.-2.*\x)/1.});
+      \draw [line width=0.5pt,domain=-0.6953520238939495:6.513716114150047] plot(\x,{(--7.-2.*\x)/1.});
+      \draw [line width=0.5pt,domain=-0.6953520238939495:6.513716114150047] plot(\x,{(--8.-2.*\x)/1.});
+      \draw [line width=0.5pt,domain=-0.6953520238939495:6.513716114150047] plot(\x,{(--9.-2.*\x)/1.});
+      \draw [->,line width=0.5pt] (1.,4.) -- (3.,5.);
+      \begin{scriptsize}
+      \end{scriptsize}
+    \end{axis}
+  \end{tikzpicture}
+\end{center}
+
+The figure shows an example of a linear programming problem. The blue region is the feasible region, and
+the black lines are the objective function. The arrow indicating in which direction the objective function improves.
+Linear programming is common in economics and operations research. The symbols can often be compared with real world scenarios.
+The objective function describe profit (price of sale for each variable), and the constraints describe the recipe for each product, with a limit
+on the available resources.
+
+\medskip
+
+
+Solutions to linear programming problems use the fact that the solution must be on the corner of the feasible region. That means
+a solver need only iterate over all the corners, and stop after finding the best one.
+
+\medskip
+
+
+Here is an example solving a problem in matlab:
+
+\begin{lstlisting}[language=Matlab]
+  c = [-7000; -6000];       % Objective function coefficients
+
+  A = [4000, 3000; 
+         60,   80];         % Constraint matrix
+
+  b = [100000; 2000];       % Constraint vector
+
+  1b = [0; 0];              % Lower bounds on x
+\end{lstlisting}
+
+Solve it:
+
+\begin{lstlisting}[language=Matlab]
+  % Solve optimization problem:
+  [x, fval, exitflag, output, lambda] = linprog(c, A, b, [], [], 1b, []); 
+\end{lstlisting}
+
+\paragraph{Quadratic programming} Is similar to linear programming, with the addition of a quadratic term in the
+objective function.
+
+\[
+  \min_{\mathbf{x}} \frac{1}{2}\mathbf{x}^{\top}\mathbf{Gx} + \mathbf{c^{\top}x} \qquad s.t. \qquad
+  \begin{aligned}
+    a_i^{\top}\mathbf{x} = b_i,\ i\in \mathcal{E} \\
+    a_i^{\top}\mathbf{x} \geq b_i,\ i\in \mathcal{I}
+  \end{aligned}
+  .\]
+
+That one extra term changes the problem quite a bit. Instead of straigt lines (from the previous figure) we have circles making up
+the objective function. Quadratic programming is used in model predictive control, so it will be important in this course.
+
+\paragraph{Convexity} is a property. A set can be convex if: 
+\[
+  x, y \in S \implies \alpha x + (1 - \alpha)y \in S,\ \forall\alpha\in [ 0,1]
+.\]  
+
+This has a nice geometric interpretation. A set is convex if you can pick two points and draw a straight line 
+between them without leaving the set.
+
+\medskip
+
+A function $f: S \to R$ is convex if S is convex and 
+\[
+  \forall x,y\in S : f(\alpha x + (1-\alpha) y) \leq \alpha f(x) + (1-\alpha)f(y) ,\ \alpha\in [ 0,1]
+.\] 
+
+The geometric interpretation here is that a straight line between two points on f is above the values of f between.
+
+\medskip
+
+An optimization problem is convex if (1) f(x) is a convex function, and (ii) the feasible set is convex. 
+
+\medskip
+
+A feasible set is convex when equality constraints are linear, and inequality constraints are concave.
+
+\paragraph{Local and global solutions} $\mathbf{x^*}$ is a global solution when $f(\mathbf{x^*}) \leq f(x) ,\ \forall \mathbf{x}\in \Omega$
+
+\medskip
+
+$\mathbf{x^*}$ is a local solution when $f(\mathbf{x^*}) <= f(\mathbf{x}),\  \forall \mathbf{x}\in \mathcal{N} \cap \Omega $ where $\mathcal{N}$ is a neighborhood of $\mathbf{x^*}$.
+
+\medskip
+
+We care about convexity because convex problems are easy to solve. This is because local solutions are easy to find, and global solutions are hard (in general). But convex problems 
+have the nice property that local solutions are also global solutions. This is one of the reason why linear programming is easier than other forms. These problems are always convex.
+
+
+
+\end{document}
