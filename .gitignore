@@ -8,5 +8,6 @@
 *.pdf
 !/*.pdf
 
+*pdf_tex
 matlab
-lectures
+notes.md

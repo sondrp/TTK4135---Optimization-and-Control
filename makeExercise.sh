@@ -6,28 +6,18 @@ if [ -z "$1" ]; then
 fi
 
 ex_num=$1
-folder_name="ex$ex_num"
+folder_name="exercises/ex$ex_num"
 
 mkdir -p "$folder_name/problems"
 
 cat <<EOF > "$folder_name/Ex$ex_num.tex"
 \\documentclass{article}
-\\usepackage{graphicx}
-\\usepackage{amsmath}
-\\usepackage{amssymb}
-\\usepackage{listings}
-\\usepackage{xcolor}
-\\usepackage{tcolorbox}
-\\usepackage{caption}
-\\usepackage[hidelinks]{hyperref}
-\\setlength{\\parindent}{0pt}
-\\usepackage[margin=0.5in]{geometry}
 
-\\input{../../macros.tex}
+\\input{../../preamble.tex}
 
 \\begin{document}
 
-\\setExerciseNumber{$ex_num}
+\Exercise{$ex_num}
 
 \\input{problems/p1.tex}
 \\end{document}
