@@ -1,0 +1,124 @@
+\usepackage{graphicx}
+\usepackage{amsmath}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{listings}
+\usepackage{xcolor}
+\usepackage{tcolorbox}
+\usepackage{caption}
+\usepackage[hidelinks]{hyperref}
+\setlength{\parindent}{0pt}
+\usepackage[margin=0.5in]{geometry}
+\usepackage{tikz}
+\usepackage{pgfplots}
+\pgfplotsset{compat=1.15}
+\usepackage{mathrsfs}
+\usetikzlibrary{arrows}
+\usepackage{import}
+\usepackage{float}
+\usepackage{transparent}
+
+
+
+
+% \usepackage{pstricks}      % does not work :(
+% \usepackage{auto-pst-pdf}
+
+\newcommand{\incfig}[2]{%
+  \def\svgwidth{#2\columnwidth}%
+  \raisebox{-\height}{\import{./figures/}{#1.pdf_tex}}%
+}
+
+\lstset{
+  language=Matlab,
+  basicstyle=\ttfamily\small,
+  numbers=left,
+  numberstyle=\tiny\color{gray},
+  stepnumber=1,
+  numbersep=5pt,
+  backgroundcolor=\color[HTML]{e2e8f0},
+  showspaces=false,
+  showstringspaces=false,
+  showtabs=false,
+  frame=single,
+  rulecolor=\color{black},
+  captionpos=b,
+  breaklines=true,
+  breakatwhitespace=false,
+  escapeinside={\%*}{*)},
+  commentstyle=\color{green},
+}
+
+
+\newcommand{\Exercise}[1]{
+  \begin{titlepage}
+    \vbox{ }
+    \vbox{ }
+    \begin{center}
+      \includegraphics[width=0.40\textwidth]{../img/NTNU_logo.png}\\[1cm]
+      \textsc{\Large TTK4135 - Optimization and Control}\\[0.5cm]
+      \vbox{ }
+      { \huge \bfseries Exercise \##1}\\[0.4cm]
+
+      \large
+      \emph{Author:}\\
+      Sondre Pedersen
+      \vfill
+
+      {\large\today}
+    \end{center}
+  \end{titlepage}
+}
+
+\newcommand{\Lecture}[2]{
+  \title{\textbf{#1}}
+  \date{#2}
+}
+
+\definecolor{framecolor}{HTML}{94a3b8}
+\definecolor{bgcolor}{HTML}{cbd5e1}
+
+\newtcolorbox{problem}[2][]{
+  colback=bgcolor,
+  colframe=framecolor,
+  fonttitle=\bfseries\color{black},
+  title=Problem #2,
+  width=\textwidth,
+  #1
+}
+
+% proof 
+\definecolor{proofcolor}{HTML}{10b981}
+\definecolor{proofbgcolor}{HTML}{d1fae5}
+
+\newtcolorbox{proofbox}[2][]{
+  colback=proofbgcolor,
+  colframe=proofcolor,
+  fonttitle=\bfseries\color{black},
+  title=#2,
+  width=\textwidth,
+  sharp corners,
+  #1
+}
+
+\newtheorem{theorem}{Theorem}
+
+\newcommand{\thrm}[1]{
+  \begin{center}
+    \begin{minipage}[t]{0.6\textwidth}
+      \begin{theorem}
+        #1
+      \end{theorem}
+    \end{minipage}
+  \end{center}
+}
+
+
+% Subtask 
+\newcommand{\SUBTASK}[2]{\medskip\medskip\textbf{\large (#1) #2}\medskip}
+
+% Matrix shorthand
+\newcommand{\M}[1]{\begin{bmatrix} #1 \end{bmatrix}}
+
+% Subheader for smaller sections
+\newcommand{\subheader}[1]{\vspace{1em}\noindent\underline{\textbf{\large #1}}\vspace{0.5em}}
