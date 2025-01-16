@@ -152,20 +152,20 @@ $\nabla c_2(\mathbf{x^*}) =
 
 \SUBTASK{d}{Lagrange multipliers}
 
-The lagrange multipliers are both positive, because the objective function would improve by should the constraints be less strict. The value of the multipliers 
-indicate how much the objective function would improve should the restrictions be extended in the direction of their negative gradient. 
+The lagrange multipliers are both positive, because the objective function would improve by should the constraints be less strict. The value of the multipliers
+indicate how much the objective function would improve should the restrictions be extended in the direction of their negative gradient.
 
 \SUBTASK{e}{Convexity}
 
 This is a convex problem because (i) the objective function is linear (which means it is convex and concave), and (ii) because the feasible region is convex.
-The convexity of the feasible region is easy to see, and can also be show by finding the hessian for $c_1$: 
+The convexity of the feasible region is easy to see, and can also be show by finding the hessian for $c_1$:
 
 \[
   \nabla _{xx}^2\mathcal{L}(\mathbf{x, \lambda^*}) =
   \begin{bmatrix}
     2\lambda_1 & 0 \\ 0 & 2\lambda_2
   \end{bmatrix}
-.\] 
+  .\]
 
-Since $\mathbf{\lambda} \geq 0$, the Hessian is positive semi-definite, which means the region is convex. $c_1(\mathbf{x})$ is also convex because it is linear. 
+Since $\mathbf{\lambda} \geq 0$, the Hessian is positive semi-definite, which means the region is convex. $c_1(\mathbf{x})$ is also convex because it is linear.
 
