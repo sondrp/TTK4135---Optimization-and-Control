@@ -6,7 +6,7 @@
 *.synctex.gz
 
 *.pdf
-!/*.pdf
+!pdf/*.pdf
 
 *pdf_tex
 matlab
