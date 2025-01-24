@@ -16,11 +16,7 @@ Work from the course Optimization and Control.
       <td>Week 2</td>
       <td><a href="pdf/l1.pdf">09.01</a></td>
       <td><a href="pdf/l2.pdf">10.01</a></td>
-      <td>
-        <a href="pdf/Ex0.pdf">Exercise 0</a>
-        <br>
-        <a href="pdf/Ex1.pdf">Exercise 1</a>
-      </td>
+      <td><a href="pdf/Ex0.pdf">Exercise 0</a></td>
       <td>-</td>
       <td>-</td>
     </tr>
@@ -28,6 +24,14 @@ Work from the course Optimization and Control.
       <td>Week 3</td>
       <td><a href="pdf/l3.pdf">16.01</a></td>
       <td><a href="pdf/l4.pdf">17.01</a></td>
+      <td><a href="pdf/Ex1.pdf">Exercise 1</a></td>
+      <td>-</td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Week 4</td>
+      <td><a href="pdf/l5.pdf">23.01</a></td>
+      <td><a href="pdf/l6.pdf">24.01</a></td>
       <td>-</td>
       <td>-</td>
       <td>-</td>

@@ -1,0 +1,271 @@
+\documentclass{article}
+
+\input{../../preamble.tex}
+
+\Lecture{Lecture 5: Solving LPs - the Simplex method}{January 23, 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Recap from last time}
+
+General linear programming problem looks like
+\[
+  \min_{x\in \mathbb{R}^{n}} c^{\top}x \qquad \text{subject to}  \qquad \left\{
+  \begin{aligned}
+    a_i^{\top}x & = b_i,\ i\in \mathcal{E}    \\
+    a_i^{\top}x & \geq b_i,\ i\in \mathcal{I}
+  \end{aligned}
+  \right.
+  .\]
+
+These can always be reformulated into standard form
+\[
+  \min_{x\in \mathbb{R}^{n}}c^{\top}x \qquad \text{subject to} \qquad \left\{
+  \begin{aligned}
+    Ax & = b    \\
+    x  & \geq 0
+  \end{aligned}
+  \right. \qquad \text{ where } A\in\mathbb{R}^{m \times n}, m < n
+  .\]
+
+The lagrangian is now
+\[
+  \mathcal{L}(x, \lambda, s) = c^{\top}x - \lambda^{\top}(Ax - b) - s^{\top}x
+  .\]
+
+The KKT conditions for linear programming:
+\begin{align*}
+  A^{\top}\lambda^* + s^* & = c                         \\
+  Ax^*                    & = b                         \\
+  x^*                     & \geq 0                      \\
+  s^*                     & \geq 0                      \\
+  x_i^*s_i ^*             & = 0 \qquad i = 1,2 ,\dots,n
+\end{align*}
+
+\paragraph{Duality}- Primal and dual have the same KKT conditions.
+
+\medskip
+\begin{minipage}[c]{0.5\textwidth}
+  \centering
+  Primal problem
+  \begin{align*}
+    \min_{x} \quad    & c^{\top}x \\
+    \text{s.t.} \quad & Ax = b    \\
+                      & x \geq 0  \\
+  \end{align*}
+\end{minipage}
+\begin{minipage}[c]{0.2\textwidth}
+  \centering
+  Dual problem
+  \begin{align*}
+    \max_{\lambda, s} \quad & b^{\top}\lambda         \\
+    \text{s.t.} \quad       & A^{\top}\lambda + s = c \\
+                            & s \geq 0
+  \end{align*}
+\end{minipage}
+
+\section{Basic feasible points}
+
+A point x is a basic feasible point if
+\begin{itemize}
+  \item x is feasible
+  \item There is an index set $\mathcal{B}(x) \subset \{1,2,,\dots,n\}$ such that
+        \begin{itemize}
+          \item $\mathcal{B}(x)$ contains m indices
+          \item $i \notin \mathcal{B}(x) \implies x_i = 0$
+          \item $B = \M{A_i}_{i\in \mathcal{B}(x)}$ is non-singular, $B\in\mathbb{R}^{m \times m}$
+        \end{itemize}
+  \item $\mathcal{B}(x)$ is called a basis for the LP
+  \item The indices not in $\mathcal{B}(x)$ are called $\mathcal{N}(x)$
+\end{itemize}
+
+These terms are hard to get a grasp on, so here is an example.
+
+\begin{center}
+  \incfig{point}{0.5}
+\end{center}
+
+If $\mathcal{B}(x) = 2$ (the red point). We see that $x_1$ and $x_3$ is 0 at this point, but $x_2$ is not.
+$A = \M{A_1 & A_2 & A_3}\in \mathbb{R}^{1\times 3}$ and $B = A_2$, a scalar in this case.
+
+\medskip For a different example, with $n = 5$ (five variables) and $m = 2$ (two constraints). Say $\mathcal{B}(x) = \{2, 3\}$
+Now
+\begin{align*}
+  Ax = b   &                               \\
+  \M{\cdot & \cdot & \cdot & \cdot & \cdot \\ \cdot & \cdot & \cdot & \cdot & \cdot}& \M{0 \\ \cdot \\ \cdot \\ 0 \\ 0} = \M{0 \\ 0}
+\end{align*}
+
+The dots indicate a non-zero value. The second and third column in A make up B, $B = \M{A_i}_{i\in \mathcal{B}(x)}$
+
+\section{Simplex method}
+
+\thrm{(Fundamental theorem of Linear Programming) For standard form LP
+  \begin{itemize}
+    \item If there is a feasible point, there is a BFP
+    \item If the LP has a solution, one solution is a BOP
+    \item If the LP is feasible and bounded, there is a solution
+  \end{itemize}}
+
+\thrm{All vertices of the feasible polytope
+  \[
+    \{x | Ax = b,\ x \geq\}
+    .\]
+  are BFPs (and all BFPs are vertices)
+}
+
+One problem that can occur - Degeneracy. This is when a BFP x with $x_i = 0$ for some $i\in \mathcal{B}(x)$
+\thrm{If an LP is bounded and non-degenerate, the Simplex method terminates at a BOP}
+
+But in practice, and with a good algorithm, this is not a big problem.
+\paragraph{LP KKT conditions} (necessary \& sufficient)
+
+\medskip The Simplex method iterates BFPs until one that fulfills KKT is found. Each step is a move from a vertex to a neighboring vertex (one change in the basis),
+that decreases the objective. Another example
+\[
+  \M{A_{11} & A_{12} & A_{13} & A_{14} & A_{15} \\ A_{21} & A_{22} & A_{23} & A_{24} & A_{25}} \M{0 \\ x_2 \\ x_3 \\ 0 \\ 0} = \M{b_1 \\ b_2}
+  .\]
+
+x is a BFP:
+\begin{align*}
+  \mathcal{B}(x) &= \dots & \mathcal{N}(x) &= \{1, \dots, n\} \backslash \mathcal{B}(x) \\
+  B &= \M{A_i}_{i \in \mathcal{B}(x)} & N &= \M{A_i}_{i \in \mathcal{N}(x)} = \M{A_{11} & A_{14} & A_{15} \\ A_{21} & A_{24} & A_{25} } \\
+  x_B &= \M{x_i}_{i\in \mathcal{B}(x)} & x_N &= \M{x_i}_{i\in \mathcal{N}(x)} = \M{0 & 0 & 0} ^{\top} \\
+  s_B &= \M{s_i}_{i\in \mathcal{B}(x)} & s_N &= \M{s_i}_{i\in \mathcal{N}(x)} \\
+  c_B &= \M{c_i}_{i\in \mathcal{B}(x)} & c_N &= \M{c_i}_{i\in \mathcal{N}(x)}
+\end{align*}
+
+\paragraph{One step of Simplex-algorithm}- Given a BFP x and $B(x)$
+\begin{itemize}
+  \item KKT-2: $Ax = Bx_B + Nx_N = Bx_B = b$
+  \item KKT-3: $x_B B^{-1}b \geq 0,\  x_N = 0$
+  \item KKT-5: $x^{\top}s = x_B^{\top}s_b + x_N^{\top}s_n = x_b^{\top}s_B$, set $s_B = 0$
+  \item KKT-1: $\M{s_B \\ s_N} + \M{B^{\top} \\ N^{\top}}\lambda = \M{c_B \\ c_N} \implies \left\{
+    \begin{aligned}
+      \lambda &= (B^{\top})^{-1}c_B \\
+      s_N &= c_N - N^{\top}\lambda
+    \end{aligned}
+  \right.$
+  \item KKT-4: Ok if $s_N  \geq 0 \implies$ BFP is BOP, so we are done
+\end{itemize}
+
+If $s_N \ngeq 0$: find a new BFP. (i) choose one index $q\in \mathcal{N}$ s.t. $s_q < 0$, and (ii) increase $x_q$ along $Ax = b$ until a component becomes zero. 
+
+$Ax^{+} = Bx_B^{+} = b = Bx_B$
+
+\medskip $x_B^{+} = x_B - B^{-1}Aqx_q^{+}$, here $d=B^{-1}Aq$
+
+\medskip $x_{B,i}-d_i x_{q,i}^{\top} = 0$
+
+\medskip $x_q^{+} = \min_{i,d_i \geq 0} \{ \frac{x_{B,i}}{d_i}\}$
+
+\begin{center}
+  \incfig{path}{0.6}
+\end{center}
+
+\paragraph{Ex. 13.1}- 
+
+\medskip Given:
+\begin{align*}
+  \min_{x \in \mathbb{R}^{2}} \qquad & -4x_1 - 2x_2 \\
+  \text{s.t.}     \qquad           & x_1 + x_2 \leq 5 \\
+  & 2x_1 + \frac{1}{2} \leq 8 \\
+  & x_1 \geq 0,\ x_2 \geq 0
+\end{align*}
+
+First write it on standard form:
+\begin{align*}
+  \min_{x\in\mathbb{R}^{4}} \qquad &-4x_2-2x_2 \\
+  \text{s.t.} \qquad & x_1 + x_2 + x_3 = 5 \\
+  & 2x_1 + \frac{1}{2} x_2+ x_4 = 8 \\
+  & x \geq 0
+\end{align*}
+
+On matrix form: 
+\[
+  c = \M{-4 \\ -2  \\ 0 \\ 0},\ A = \M{1 & 1 & 1 & 0 \\ 2 & \frac{1}{2} & 0 & 1},\ b = \M{5  \\ 8}
+.\] 
+
+Choose first basic feasible point $x = \M{0 \\ 0 \\ 5 \\ 8}$. We can directly read out these values from the problem:
+
+\begin{itemize}
+  \item $x = \M{0  & 0 & 5 & 8}^{\top}$
+  \item $\mathcal{B}(x) = \{3, 4\}$
+  \item $\mathcal{N}(x) = \{1,2\}$
+  \item $B = \M{1  & 0 \\ 0 & 1}$
+  \item $N = \M{1 & 1 \\ 2 &  \frac{1}{2}}$
+\end{itemize}
+
+\medskip Calculate some values (?):
+\begin{itemize}
+  \item $x_B = B^{-1}b = \M{5  \\ 8}$
+  \item $\lambda = (B^{\top})^{-1}c_B = \M{1  & 0 \\ 0 & 1}\M{0 \\ 0} = \M{0 \\ 0}$
+  \item $s_N = c_N - N^{\top}\lambda = \M{-4 \\ -2}-\M{1 & 2 \\ 1 &  \frac{1}{2}}\M{0 \\ 0} = \M{-4 \\ -2} \qquad \ngeq 0$
+\end{itemize}
+
+Pick smallest element of $s_N$: $s_1=-4 \rightarrow q = 1$. Let $q = 1$ enter $\mathcal{B}$ (leaving $\mathcal{N}$). Increase $x_1$ while $Ax=b,\  x_4$ becomes zero first. Let $p=4$ leave $\mathcal{B}$ and enter $\mathcal{N}$.
+
+\medskip \textbf{Second iteration}
+\begin{itemize}
+  \item $\mathcal{B}(x) = \{1, 3\}$
+  \item $\mathcal{N}(x) = \{2, 4\}$
+  \item $B = \M{1 & 1 \\ 2 & 0} \rightarrow B^{-1} = \frac{1}{2}\M{0 & 1 \\ 2 & -1}$
+  \item $N = \M{1 & 0 \\  \frac{1}{2} & 1}$
+\end{itemize}
+
+Calculations: 
+\begin{itemize}
+  \item $x_B = \M{x_1  \\ x_3} = B^{-1}b = \frac{1}{2} \M{0 & 1 \\ 2 & -1}\M{5 \\ 8} = \M{4 \\ 1}$
+  \item $x_N = \M{0  \\ 0}$
+  \item $\lambda = (B^{\top})^{-1}c_B = \dots = \M{0 \\ -2}$
+  \item $s_N = c_N - N^{\top}\lambda = \M{-2 \\ 0}- \M{1 &  \frac{1}{2} \\ 0 & 1}\M{0 \\ -2} = \M{-1 \\ 2}$
+\end{itemize}
+
+Now the smallest value is $q = 2$, the entering index. $p = 3$ is the leaving index. 
+
+\medskip \textbf{Third iteration}
+\begin{itemize}
+  \item $\mathcal{B}(x) = \{1, 2\}$
+  \item $\mathcal{N}(x) = \{3, 4\}$
+  \item $B = \M{1 & 1 \\ 2 &  \frac{1}{2}} \rightarrow B^{-1} = \frac{1}{3}\M{-1 & 2 \\ 4 & -2}$
+  \item $N = \M{1 & 0 \\ 0 & 1}$
+  \item 
+\end{itemize}
+And
+\begin{itemize}
+  \item $x_B = B^{-1}b = \dots = \M{ 11 / 3  \\  4 / 3}$
+  \item $\lambda = (B^{-1})^{\top}c_B = \dots = \M{ -4 / 3 \\ -4 / 3}$
+  \item $s_N = c_N -N^{\top}\lambda = \M{0 \\ 0} - \M{1 & 0 \\ 0 & 1}\M{- 4 / 3  \\  -4 /3} = \M{9 / 3 \\ 4 /3} \geq 0$
+\end{itemize}
+
+Since $s_N$ is greater than 0, we have an optimal solution, $x^* = \M{11 /3  \\ 4 /3  \\  0  \\  0}$
+
+\section{Other details}
+
+In each step of the Simplex algorithm, two linear systems must be solved. $B^{\top}\lambda = c_B$ and $Bd = A_q$. The last
+one is to find the direction to check when increasing $x_q$. We also have $Bx_B = b$. Since $x_B$ is not needed in the iterations, we don't need
+to solve this before the final iteration. 
+
+\medskip B is a general, non-singular matrix. It is guaranteed to have a solution. LU factorization is the correct method to solve both systems.
+
+\medskip In each step of the Simplex method, one column of B is replaced. There are some tricks to save time with maintaining solutions of LU factorizations.  
+
+\paragraph{Finding a starting point} in the Simplex method is as hard as solving the problem itself. 
+Normally, simplex algorithms have two phases, one for finding the first feasible point, and the other to actually solve it. 
+
+This is done by making another LP with a trivial BFP, where the solution is a BFP for the original problem. 
+\begin{align*}
+  &\min e^{\top}z \text{ subject to } Ax + Ez = b,\ (x,z) > 0 \\ 
+  &e = (1,1,,\dots,1)^{\top},\  \text{ E diagonal matrix with }\left\{
+    \begin{aligned}
+      &E_{jj} = 1 \text{ if } b_j \geq 0 \\ 
+      &E_{jj} = -1 \text{ if } b_j < 0  
+    \end{aligned}
+  \right.
+\end{align*}
+
+\paragraph{Complexity}- the simplex method is typically very efficient (2m to 3m  iterations). But the worst case is exponential complexity, if all vertices must be visited.
+
+Interior point methods have better worst case complexity, but simplex still performs better usually. 
+\end{document}
