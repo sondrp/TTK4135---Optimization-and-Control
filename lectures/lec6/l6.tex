@@ -1,0 +1,174 @@
+\documentclass{article}
+
+\input{../../preamble.tex}
+
+\Lecture{Lecture 6: Quadratic Programming \& Equality-constrained QPs}{January 24, 2025}
+
+\begin{document}
+
+\maketitle
+
+\begin{minipage}[c]{0.3\textwidth}
+  \raggedright
+  \begin{itemize}
+    \item Quadratic programming
+          \begin{itemize}
+            \item Convex problem  if $G \geq 0$
+            \item Feasible set polyhedron
+          \end{itemize}
+  \end{itemize}
+\end{minipage}
+\begin{minipage}[c]{0.3\textwidth}
+  \centering
+  \begin{align*}
+    \min_{x\in \mathbb{R}^{n}} \quad & \frac{1}{2}x^{\top}Gx + q^{\top}x                    \\
+    \text{s.t.} \quad                & c_i(x) = a_i^{\top}x - b_i = 0,\ i\in \mathcal{E}    \\
+                                     & c_i(x) = a_i^{\top}x -b_i \geq 0,\  i\in \mathcal{I}
+  \end{align*}
+\end{minipage}
+\begin{minipage}[c]{0.3\textwidth}
+  \raggedleft
+  \incfig{quadratic}{0.8}
+\end{minipage}
+
+The easy case is when $G \geq 0$, because the QP is convex. When $G \ngeq 0$, then the problem is non-convex, and much harder.
+
+\medskip Quadratic programming is common in control. Quadratic programming also shows up in production optimization when the price varies with ammount produced. This is a
+realistic example. Here is an example comparing linear profit with profit that depends on how much you produce. :
+
+\begin{minipage}[c]{0.5\textwidth}
+  \begin{align*}
+    \max_{x_1, x_2} \qquad 7000 x_1 + 6000x_2 &             \\
+    \text{s.t.} \qquad 4000x_1 + 3000x_2      & \geq 100000 \\
+    60x_1 + 80x_2                             & \leq 2000   \\
+    x_1                                       & \geq 0      \\
+    x_2                                       & \geq 0      \\
+  \end{align*}
+  \begin{center}
+    \incfig{lp}{0.8}
+  \end{center}
+\end{minipage}
+\begin{minipage}[c]{0.5\textwidth}
+  \begin{align*}
+    \max_{x_1, x_2} \qquad (7000-200x_1)x_1 + (6000 & - 140x_2)x_2 \\
+    \text{s.t.} \qquad 4000x_1 + 3000x_2            & \leq 100000  \\
+    60x_1 + 80x_2                                   & \leq 2000    \\
+    x_1                                             & \geq 0       \\
+    x_2                                             & \geq 0       \\
+  \end{align*}
+  \begin{center}
+    \incfig{qp}{0.8}
+  \end{center}
+\end{minipage}
+
+\medskip
+The level curves are no longer linear, but real curves. Also, the optimal point may no longer lie in the corner, which is the property used in LP solvers. 
+
+\medskip Rewriting the objective function for the quadratic version, we get
+\begin{align*}
+  &\min_{x_1, x_2} 200x_1^2 + 140x_2^2 - 7000x_1 - 6000x_2 \\
+  &\min_{x\in \mathbb{R}^{2}} \frac{1}{2}x^{\top}\M{400 & 0 \\ 0 & 280}x + \M{-7000 & -6000}x
+\end{align*}
+
+The matrix here is G, and it is always symmetric. 
+
+\section{Equality-constrained QPs}
+
+In general
+\begin{align*}
+  \min_{x\in\mathbb{R}^{n}} \qquad& \frac{1}{2}x^{\top}Gx + c^{\top}x \\
+  \text{s.t.}\qquad & a_i^{\top}x - b_i = 0,\  i\in \mathcal{E} = \{1,,\dots,m\},\ \mathcal{I} = Ø
+\end{align*}
+
+Define $A = \M{a_1^{\top}  \\ a_2^{\top}  \\  \vdots  \\ a_m^{\top}}\in \mathbb{R}^{m\times n},\ m < n$. $b = \M{b_1 \\ b_2 \\ \vdots \\ b_m}$ and we assume $rank(A) = m$ (full row rank).
+Now we can write it (EQP) as
+\begin{align*}
+  \min_{x\in \mathbb{R}^{n}} \qquad& \frac{1}{2}x^{\top}Gx + c^{\top}x \\
+  \text{s.t.} \qquad& Ax = b
+\end{align*}  
+
+\paragraph{KKT} for equality-constrained QP
+
+Since we have equality constraints, only the two KKT conditions need to be considered. The lagrangian:
+\[
+  \mathcal{L}(x, \lambda) = \frac{1}{2}x^{\top}Gx + c^{\top}x - \lambda^{\top}(Ax-b) 
+.\] 
+
+KKT: 
+\begin{align*}
+  \nabla_{x}\mathcal{L}(x^*, \lambda^*) &= Gx^*+c - A^{\top}\lambda^* = 0 \\
+  Ax^* &= b
+\end{align*}
+
+The KKT conditions are linear here, so we can write them in matrix form.
+\[
+  \M{G & -A^{\top} \\ A & 0}\M{x^* \\ \lambda^*} = \M{-c \\ b}
+.\] 
+Solving this system will solve the KKT condition. An alternative form that can be more practical ($x^* = x + p$):
+\[
+  \M{G & A^{\top} \\ A & 0}\M{-p \\ \lambda^*} = \M{c-Gx^* \\ Ax-b}
+.\] 
+
+These are called KKT-systems, and they show up a lot. 
+
+\paragraph{Nullspace} is needed to know when solution to KKT is also the solution to EQP. 
+
+\medskip Given feasible x (Ax = b). Rewrite the EQP as
+\begin{align*}
+  \min_p \qquad& \frac{1}{2}(x+p)^{\top}G(x+p) + x^{\top}(x+p)  \\ 
+  \text{s.t.} \qquad& A(x+p) = b \qquad \text{(Ap = 0 since Ax = b)}
+\end{align*}
+We are searching for solutions p in $Null(A) = \{w | Aw = 0\}$. 
+
+\medskip Let columns of $Z\in \mathbb{R}^{n\times (n-m)}$ span $Null(A)$. Use QR to find this. 
+
+\medskip Example: $A_p = \M{1 & 0 & 0}\M{p_1 \\ p_2 \\ p_3}= 0 \qquad 
+\left(
+  \begin{aligned}
+    &m = 1  \\ 
+    &n = 3
+  \end{aligned}
+\right)$
+
+$A\M{0 \\ 1 \\ 0} = 0,\ A\M{0 \\ 0 \\ 1} = 0 \implies Z = \M{0 & 0 \\ 1 & 0 \\ 0 & 1} \implies AZ = 0$
+
+\paragraph{When can EQP be solved}- Assume A full row rank. Also, $Z^{\top}GZ > 0$, then $\M{G & A^{\top} \\ A & S}$ is non-singluar. This implies $\left\{
+  \begin{aligned}
+    x^*& = x+p \qquad \text{is unique solution}  \\ 
+    \lambda^*& \qquad \text{to KKT system} 
+  \end{aligned}
+\right.$
+
+\thrm{
+  \[
+    \left.
+      \begin{aligned}
+          &\text{A full row rank}  \\ 
+          &Z^{\top}GZ > 0 
+      \end{aligned}
+    \right\} \implies x^* \text{ unique solution to EQP}
+  .\] 
+}
+
+\begin{proofbox}{Proof Theorem 1 (16.2)}
+A x is feasible, $x^*$ is a solution to KKT-system, $x+p = x^*$. 
+\begin{align*}
+  &Ap = A(x^*-x)  = Ax^*-Ax = b - b = 0 \implies p\in Null(A)
+\end{align*}
+We want to show $q(x) > q(x^*),\  x \neq x^*$. 
+\begin{align*}
+  q(x) &= \frac{1}{2}x^{\top}Gx + x^{\top}x = \frac{1}{2}(A^*- p) + c^{\top}(x^*-p)  \\ 
+  &= \frac{1}{2}x^{*\top}GA^* + \frac{1}{2}p^{\top}Gp + c^{\top}x^* - c^{\top}p  \\ 
+  &= q(x^*) - p^{\top}(GA^*+c) + \frac{1}{2}p^{\top}Gp  \\ 
+  &= q(x^*) + \frac{1}{2}u^{\top}Z^{\top}GZu  \\ 
+  & > q(x^*)
+\end{align*}
+\end{proofbox}
+
+\paragraph{Nullspace method/Elimination of varialbes}- ?
+
+
+
+
+
+\end{document}
