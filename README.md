@@ -32,7 +32,7 @@ Work from the course Optimization and Control.
       <td>Week 4</td>
       <td><a href="pdf/l5.pdf">23.01</a></td>
       <td><a href="pdf/l6.pdf">24.01</a></td>
-      <td>-</td>
+      <td><a href="pdf/Ex2.pdf">Exercise 2</a></td>
       <td>-</td>
       <td>-</td>
     </tr>

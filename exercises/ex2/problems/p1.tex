@@ -14,3 +14,35 @@
 \end{problem}
 
 %%% SOLUTION %%%
+
+\SUBTASK{a}{KKT conditions}
+
+The Lagrangian:
+\[
+  \mathcal{L}(x, \lambda, s) = c^{\top}x - \lambda^{\top}(Ax-b) - s^{\top}x
+.\] 
+
+The KKT conditions: 
+\begin{align*}
+  \nabla_{x}\mathcal{L}(x, \lambda, s) &= c - A^{\top}\lambda - s = 0 \\
+  Ax &= b \\ 
+  x &\geq 0  \\ 
+  s &\geq 0  \\ 
+  x^{\top}s &= 0 
+\end{align*}
+
+The last one is comes from the assumption that both x and s is greater than 0.
+
+\SUBTASK{b}{Convex objective function}
+
+The feasible region is convex, because it is constrained by linear functions. Given two feasible points $x^{(1)}$ and $x^{(2)}$, $f(x)$ is convex if
+\[
+  f(\alpha x^{(1)} + (1-\alpha)x^{(2)}) \leq \alpha f(x^{(1)}) + (1-\alpha f(x^{(2)})),\ \alpha\in [0, 1]
+.\] 
+
+Check for $f(x) = c^{\top}x$: 
+\[
+  f(\alpha x^{(1)} + (1-\alpha)x^{(2)}) = c^{\top}(\alpha x^{(1)} + (1-\alpha)x^{(2)}) = \alpha c^{\top} x^{(1)} + (1-\alpha)c^{\top}x^{(2)} = \alpha f(x^{(1)}) + (1-\alpha) f(x^{(2)})
+.\] 
+
+This shows that f is convex. 
