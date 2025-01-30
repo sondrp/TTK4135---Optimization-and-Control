@@ -36,5 +36,13 @@ Work from the course Optimization and Control.
       <td>-</td>
       <td>-</td>
     </tr>
+    <tr>
+      <td>Week 5</td>
+      <td><a href="pdf/l7.pdf">30.01</a></td>
+      <td><a href="pdf/l8.pdf">31.01</a></td>
+      <td><a href="pdf/Ex2.pdf">Exercise 2</a></td>
+      <td>-</td>
+      <td>-</td>
+    </tr>
   </tbody>
 </table>

@@ -1,0 +1,199 @@
+\documentclass{article}
+
+\input{../../preamble.tex}
+
+\Lecture{Lecture 7: Active Set Method for Quadratic Programming}{January 30, 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Background for Active Set Method}
+
+Simplified preview:
+\medskip \begin{itemize}
+  \item Make a guess of which inequality constraints are active
+  \item Solve corresponding EQP
+  \item Check KKT-conditions
+        \begin{itemize}
+          \item If KKT OK: done
+          \item else: update active contraint guess and go to 2.
+        \end{itemize}
+\end{itemize}
+
+\paragraph{KKT for QP} $\min_{x\in\mathbb{R}^{n}} \frac{1}{2} x^{\top}Gx + c^{\top}x \qquad \text{s.t.}\qquad\left\{
+  \begin{aligned}
+    a_i^{\top}x & = b_i,\  i\in\mathcal{E}    \\
+    a_i^{\top}x & \geq b_i ,\ i\in\mathcal{I}
+  \end{aligned}
+  \right.$
+
+Lagrangian:
+\[
+  \mathcal{L}(x, \lambda) = \frac{1}{2}x^{\top}Gx + x^{\top}x - \sum_{i \in\mathcal{E}\cup\mathcal{I}} \lambda_i(a_i^{\top}x-b_i)
+  .\]
+KKT:
+\begin{align*}
+  Gx^*+ c - \sum_{i \in\mathcal{E}\cup\mathcal{I}}\lambda_i^*a_i & = 0                                  \\
+  a_i^{\top}x^*                                                  & = b_i,\ i\in\mathcal{E}              \\
+  a_i^{\top}x^*                                                  & \geq b_i,\  i\in \mathcal{I}         \\
+  \lambda_i^*                                                    & \geq ,\ i\in \mathcal{I}             \\
+  \lambda_i ^*(a_i^{\top}x-b_i)                                  & = 0, i\in \mathcal{I}\cup\mathcal{E}
+\end{align*}
+
+To make active set method, we reformulate KKT via the active set, which was defined as:
+\begin{align*}
+  \mathcal{A}(x^*) = \{i\in \mathcal{E}\cup\mathcal{I} | a_i^{\top}x^* = b_i\}
+\end{align*}
+
+Assume we know $\mathcal{A}(x^*)$, then KKT is
+\begin{align*}
+  Gx^* + x - \sum_{\mathcal{A}(x^*)}\lambda_i^*a_i & = 0                                                      \\
+  a_i^{\top}x^*                                    & = b_i,\  i\in \mathcal{A}(x^*)                           \\
+  a_i^{\top}x^*                                    & \geq b_i,\  i\in \mathcal{I} \backslash \mathcal{A}(x^*) \\
+  \lambda_i^*                                      & \geq 0 ,\ i\in \mathcal{I}\cup\mathcal{A}(x^*)
+\end{align*}
+
+The lambdas that are not active equals 0.
+
+\begin{proofbox}{Theorem 16.4: If $x^*$ satisifies KKT and $G \geq 0$ then $x^*$ is a global solution}
+  Proof: Assume x is feasible, $x \neq x^*$. Note first: $(x-x^*)^{\top}(Gx^*+ c) = (x-x^*)^{\top}\sum_{i\in \mathcal{A}(x^*)}\lambda_i^*a_i = \sum_{i\in \mathcal{E}}\lambda_i^*a_i^{\top}(x-x^*) + \sum_{i\in \mathcal{A}(x^*) \cup\mathcal{I}}\lambda_i^*a_i^{\top}(x-x^*)$
+
+  \medskip \begin{align*}
+    q(x) & = \frac{1}{2}(x^*+ (x-x^*)^{\top})G(x^*+ (x-x^*))+c^{\top}(x^*+(x-x^*))                           \\
+         & = \frac{1}{2}x^{*\top}Gx^*+c^{\top}x^*+ (x-x^*)^{\top}G(x-x^*) + (x-x^*)^{\top}Gx+c^{\top}(x-x^*) \\
+         & = q(x^*) + \frac{1}{2}(x-x^*)^{\top}G(x-x^*)+(x-x^*)^{\top}(Gx^* + c)                             \\
+         & \geq q(x^*)\qquad\text{proof complete}
+  \end{align*}
+
+  \medskip Note: $Z^{\top}GZ > 0 \implies q(x) > q(x^*)$, that is: $x^*$ is strict global solution.
+\end{proofbox}
+
+\medskip If we know $\mathcal{A}(x^*)$, QP can be forumalted as
+\[
+  \min_{xin\mathbb{R}^{n}} \frac{1}{2}x^{\top}Gx + c^{\top}x \qquad\text{s-t-}\qquad a_i^{\top}x = b_i ,\ i\in \mathcal{A}(x^{\top})
+  .\]
+
+This can then be solved by solving the KKT-system:
+\[
+  \M{G & -A^{\top} \\ A & 0}\M{x^* \\ \lambda^*} = \M{-c \\ b} \left\{
+  \begin{aligned}
+    A & = \M{\vdots \\ a_i^{\top} \\ \vdots} ,\ i\in \mathcal{A}(x^*)  \\
+    b & = \M{\vdots \\ b_i \\ \vdots} ,\ i\in \mathcal{A}(x^*)
+  \end{aligned}
+  \right.
+  .\]
+
+\section{One step of active set method for QP}
+
+Iteration k:
+\begin{itemize}
+  \item $\mathcal{W}_k$: current `guess' of $\mathcal{A}(x^*)$.
+  \item $x_k$: current feasible estimate of $x^*$.
+  \item $g_k$: $(Gx_k + c)^{\top}$
+\end{itemize}
+
+Define $A_x = \M{\vdots \\ Q_i^{\top} \\ \vdots}, i\in \mathcal{W}_k,\  b_k = \M{\vdots \\ b_i \\ \vdots}, i\in \mathcal{W}_k$
+
+\medskip Consider EQP: $x = x_k + p$:
+\begin{align*}
+  \min_{p\in \mathbb{R}^{n}}\quad           & \frac{1}{2}(x_k+ p) ^{\top}G(x_k + p) + c^{\top}(x_k+ p)                  \\
+  \text{s.t.}\quad                          & A_k(x_k + p) = b_k                                                        \\
+  \implies \min_{p\in \mathbb{R}^{4}} \quad & \frac{1}{2}p^{\top}Gp + (Gx_k + c)^{\top}p \qquad\text{s.t.}\qquad Ap = 0
+\end{align*}
+
+\begin{itemize}
+  \item If $p_k = 0$: solve $\sum_{i\in \mathcal{W}_k}a_i \hat{\lambda_i} = g_k$ for $\hat{\lambda}$ ($A_k \hat{\lambda} = g_k$)
+        \begin{itemize}
+          \item If $\hat{\lambda} \geq 0$:
+                \begin{itemize}
+                  \item All KKT-conditions fulfulled
+                  \item $x_k$ is our solution
+                \end{itemize}
+          \item If $\hat{\lambda} \ngeq 0$:
+                \begin{itemize}
+                  \item Pick index of one negative $\hat{\lambda_i}$
+                  \item Remove this index from $\mathcal{W}_k$
+                  \item Start over.
+                \end{itemize}
+        \end{itemize}
+  \item If $p_k \neq 0$: 
+  \begin{itemize}
+    \item If $x_{k+1} = x_k + p_k$ is feasible: Set $\mathcal{W}_{k+1} = \mathcal{W}_k$, start over
+    \item If $x_{k+1} = x_k + p_k$ is not feasible: find blocking constraint 
+    \begin{itemize}
+      \item For $i\in \{i | a_i^{\top}p_k < 0\}$ 
+      \item want $a_i^{\top}(x_k+\alpha_ip_k) \geq b_i$ 
+      
+      $\qquad \implies \lambda_i = \frac{b_i - a_i^{\top}x_k}{\alpha_i^{\top}p_k}$
+      \item Set j = "i with smallest $\alpha_i"$
+      \item $x_{k + 1} = x_n + \alpha_j p_k$, $\mathcal{W}_{k+1} = \mathcal{W}_k + \{j\}$
+      \item start over\dots
+    \end{itemize}
+  \end{itemize}
+\end{itemize}
+
+This is one of the key algorithms in the course. 
+
+\paragraph{Example 16.4}-
+
+\medskip \begin{minipage}[c]{0.5\textwidth}
+  \centering
+  \incfig{ex16}{1}
+\end{minipage}
+\begin{minipage}[c]{0.5\textwidth}
+  \begin{align*}
+    \min_x q(x) = (x_1-1)^2 + (x_2-2.5)^2& \\ 
+    \text{s.t.}\quad x_1 -2x_2+2 \geq 0 \qquad(1)& \\ 
+    -x_1-2x_2+6 \geq 0 \qquad(2)& \\ 
+    -x_1+2x_2+2  \geq 0 \qquad(3)& \\ 
+    x_1 \geq 0 \qquad(4)&  \\ 
+    x_2 \geq 0 \qquad(5) 
+  \end{align*}
+\end{minipage}
+
+\begin{minipage}[t]{0.2\textwidth}
+  \begin{align*}
+    G &= \M{2 & 0 \\ 0 & 2}  \\ 
+    a_1 &=\M{1 & -2}^{\top} \\ 
+    a_2 &=\M{-1 & -2}^{\top} \\ 
+    a_3 &=\M{-1 & 2}^{\top} \\ 
+    a_4 &=\M{1 & 0}^{\top} \\ 
+    a_5&=\M{0 & 1}^{\top} 
+  \end{align*}
+\end{minipage}
+\begin{minipage}[t]{0.2\textwidth}
+  \begin{align*}
+    c &= \M{-2 \\ -5} \\ 
+    b_1 &= -2 \\ 
+    b_2 & =-6 \\ 
+    b_3&= -2 \\ 
+    b_4 &= 0 \\ 
+    b_5 &= 0
+  \end{align*}  
+\end{minipage}
+
+We have two different indices, one for iteration and one for variable. Denote iteration k like $x^k$.
+
+\medskip $x^{0} = \M{2 \\ 0},\ \mathcal{W}= \{3, 5\} ,\ g_k = Gx^{0}+ c = \M{2 \\ -5}$
+
+\medskip EQP:
+\begin{align*}
+  &\min_p \frac{1}{2}p^{\top}Gp + g_0^{\top}p  \\ 
+  &\text{s.t. } A_0 p = 0 \\  \\ 
+  &\min_p p_1^2+p_2^2+2p_1-5p_2 \\ 
+  &\text{s.t. }-p_1+2p_2 = 0 \\ 
+  &p_2 = 0  \\  \\ 
+  & \sum_{i\in \mathcal{W}_0}a_i \hat{\lambda_i} = g_0 : \M{-1 \\ -2} \hat{\lambda_3} + \M{0 \\ 1} \hat{\lambda_5} = \M{2 \\ -5}
+\end{align*}
+
+Remove \{3\} from $\mathcal{W}_0$. Continue with next iteration.
+We have $x^{1} = \M{2 \\ 0},\ \mathcal{W}_1 = \{5\},\ g_1 = \M{2 \\ -5}$
+
+EQP gives $p^{1} = \M{-1 \\ 0}$. 
+
+\medskip $x^2 = x^{1}+ p ^{1} = \M{1 \\ 0}$, which is feasible. $\mathcal{W}_2 = \mathcal{W}^{1}$
+
+And some more stuff
+
+\end{document}
