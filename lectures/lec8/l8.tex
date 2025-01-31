@@ -1,0 +1,222 @@
+\documentclass{article}
+
+\input{../../preamble.tex}
+
+\Lecture{Lecture 8: Open-Loop Dynamic Optimization}{January 31, 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Optimization in Control}
+
+This is the start of the control part of the course.
+
+\begin{center}
+  \begin{tabular}{p{6cm}p{10cm}} % Adjust column width as needed
+    \textbf{Optimization problems we study} & \textbf{Use of optimization in control}      \\
+    \hline
+    \begin{itemize}
+      \item Class: Linear programming
+      \item Method: Simplex
+    \end{itemize}
+                                            &
+    \begin{itemize}
+      \item (Some use in MPC, but not typical)
+      \item (Sometimes used for computing economic setpoints for PID control)
+    \end{itemize}
+    \\
+    \hline
+    \begin{itemize}
+      \item Class: Quadratic programming
+      \item Method: Active set
+    \end{itemize}
+                                            & \begin{itemize}
+                                                \item Dynamic optimizatin using linear models
+                                                      \begin{itemize}
+              \item Open loop dynamic optimization
+              \item Closed loop dynamic optimization / MPC
+              \item Linear Quadratic Control
+            \end{itemize}
+                                              \end{itemize} \\
+    \hline
+    \begin{itemize}
+      \item Class: Nonlinear programming
+      \item Method: Sequential Quadratic Programming
+    \end{itemize}
+                                            &
+    \begin{itemize}
+      \item Dynamic optimization using nonlinear models
+      \item Nonlinear Model Predictive Control
+    \end{itemize}
+  \end{tabular}
+\end{center}
+
+\paragraph{Static vs dynamic optimization}- Does time matter?
+
+\medskip When solving practical problems (that is, we optimize some process) we have two cases:
+\begin{itemize}
+  \item Time independent process $\implies$ static optimization
+        \begin{itemize}
+          \item Common in finance, economic optimization
+          \item Farming example from previous lectures
+        \end{itemize}
+  \item Time dependent process $\implies$ dynamic optimization
+        \begin{itemize}
+          \item More common in cybernetics/control engineering
+          \item Mechanical systems (boat, drone, robot, ...), chemical process (chemical reactor, process plant, ...), electrical/energy system
+        \end{itemize}
+\end{itemize}
+
+It is possible to go for a third option: quazi-dynamic optimization. If the process changes slowly over time, it is possible to assume that it
+is not changing at all and using static optimization. To compensate, re-solve regularly.
+
+\paragraph{Quazi-dynamic example}- Oil production
+
+Given a floating production ship with n wells. These wells will produce a stream of oil, gass and water. The ship has a separator to put these in different tanks.
+The ouput of the separator (g: gass, o: oil, w: water) from well i:
+\begin{align*}
+  q_g & = \sum q_{gi} \\
+  q_o & = \sum q_{oi} \\
+  q_w & = \sum q_{wi} \\
+\end{align*}
+
+From day to day the ouputs do not change very much, so we can make a static model.
+\begin{align*}
+  (*)             & \left\{
+  \begin{aligned}
+     & q_{qi} = \alpha_{gi} \times q_i,\  i = 1,\dots,n                     \\
+     & q_{wi} = \alpha_{wi} \times q_i,\  i = 1,\dots,n                     \\
+     & q_{oi} = (1 - \alpha_{gi} - \alpha_{wi}) \times q_i,\  i = 1,\dots,n \\
+     & \sum_{i = 1}^{n} q_{gi} \leq q_{g, max}                              \\
+     & \sum_{i = 1}^{n} q_{wi} \leq q_{w, max}                              \\
+  \end{aligned}
+  \right.                                                                                \\
+  \text{Optimize} &                                                                      \\
+                  & \min_{z}\quad-\sum_{i = 1}^{n}q_{oi} \qquad\text{s.t.}\qquad (*)     \\
+                  & \text{where } z = (q_1, g_{g_1}, q_{wq}, q_{o_1}, q_1, \dots)^{\top}
+\end{align*}
+
+Here $\alpha$ is a gass-oil ratio. We assume the parameters are constant for one day, but they might change the next. When they do,
+re-optimize.
+
+\section{Dynamic models}
+\begin{align*}
+  x_{t+1} &= g(x_t, u_t)       && \text{(general nonlinear dynamic model)} \\
+  x_{t+1} &= A_t x_t + B_t u_t && \text{(LTV)} \\
+  x_{t+1} &= A x_t + Bu_t     && \text{(LTI)}
+\end{align*}
+
+In the world, models are not linear. But they can still be a good approximation. To get this approximation, we linearize $x_{t+1} = g(x_t, u_t)$.
+Linearize about either $\left\{
+  \begin{aligned}
+    \text{trajectory }\overline{x}_{t+1} = g(\overline{x}_t, \overline{u}_t) \\
+    \text{stationary point } \overline{x} = g(\overline{x}, \overline{u})
+  \end{aligned}
+\right.$
+
+Define perturbation $x_t = \overline{x}_t + \delta x_t ,\ u_t = \overline{u}_t + \delta u_t$. 
+Now 
+\begin{align*}
+  x_{t+1} &= g(\overline{x}_t+ \delta x_t, \overline{u}_t + \delta u_t) \\
+  &\approx g(\overline{x}_t, \overline{u}_t) + \frac{\partial g}{\partial x} \bigg|_{\overline{x}_t, \overline{u}_t}\times \delta x_t + \frac{\partial g}{\partial u}\bigg|_{\overline{x}_t, \overline{u}_t}\times \delta u_t\\
+  & \delta x_{t+1} = A_t \delta x_t + B_t \delta u_t  \qquad\text{(LTV)} \\
+  & \delta x_{t+1} = A \delta x_t + B \delta u_t  \qquad\text{     (LTI)} \\
+\end{align*}
+
+\paragraph{General dynamic optimization problem}- 
+
+\begin{minipage}[t]{0.5\textwidth}
+  \begin{align*}
+    \min_z \quad &\sum_{t = 0}^{N-1}f_t(x_{t+1}, u_t) \\
+    \text{s.t.} \quad &x_{t+1} = g(x_t, u_t),\  t = 0,\dots,N-1 \\ 
+    &h_t(x_t, u_t) \leq 0,\  t = 0,\dots,N
+  \end{align*}
+\end{minipage}
+\begin{minipage}[t]{0.5\textwidth}
+  \begin{itemize}
+    \item N: prediction horizon
+    \item $f_t$: stage cost
+    \item $u_t$: system input
+    \item $g_t$: dynamic model
+    \item $h_t$: state and input constraints
+  \end{itemize}
+\end{minipage}
+$x_0$ is given.
+$z = \M{u_0^{\top}, x_1^{\top}, u_1^{\top},\dots,u_{N-1}^{\top}, x_N^{\top}}^{\top}$
+
+\begin{center}
+  \incfig{system}{1}
+\end{center}
+
+Typical objectives (stage costs) in dynamic optimization: penalize deviations from a constant reference/setpoint (regulation), or deviations from a reference trajectory (tracking).
+Other typical objectives include: maximize profit, maximize production, minimize costs, limit tear, reach endpoints fast.
+
+\medskip General quadratic stage cost:
+\[
+  f_t(x_{t+1}, u_t) = \frac{1}{2} x_{t+1}^{\top}Q_t K_{t+1} + d_{x, t}^{\top} x_t + \frac{1}{2} u_t^{\top}R_t u_t + d_{u,t}^{\top} u_t
+.\] 
+
+This general form reduces nicely to special cases. 
+
+\medskip A quadratic objective is good for two reasons: (i) it is convenient mathematically. The gradient is linear, and smoothness is good for calculations. 
+(ii) It has a natural response to deviations. A small deviation does not matter too much, but big deviations will cause a stronger response. 
+
+\paragraph{Standard linear dynamic optimization problem}
+\begin{align*}
+  \min_z \qquad& \frac{1}{2} \sum_{t = 0}^{N-1}x_{t+1}^{\top}Qx_{t+1} + \frac{1}{2}u_t^{\top}R u_t \\ 
+  \text{s.t.} \qquad& x_{t+1} = Ax_t + Bu_t,\  t = 0,\dots,N-1 \\
+  & x^{low}\leq x_t \leq x^{high},\  t = 1,\dots,N \\ 
+  & u^{low}\leq u_t \leq u^{high} ,\ t = 0,\dots,N-1 \\\\
+  & x_0: \text{ given} \\
+  & z = \M{u_0^{\top}, x_1^{\top}, u_1^{\top}, x_2^{\top},\dots,u_{N-1}^{\top}, x_N^{\top}}^{\top}
+\end{align*}
+
+Can be solved using `Batch approach v1, "Full space"'. Great name. With this approach we can write the problem as
+
+\begin{align*}
+  \min_z \qquad& \frac{1}{2}z^{\top}\M{
+    R \\ 
+     & Q \\ 
+     &  & R \\ 
+     &  &  & Q \\ 
+     &  &  &  & \ddots
+  }z \\
+  \text{s.t.}\qquad& \M{
+    -B & I & 0 & 0 & 0 & \dots \\ 
+    0 & -A & -B & I & 0 & \dots \\ 
+    0 & 0 & -A & -B & I & \dots \\ 
+    \vdots &  &  & \ddots  \\ 
+  }z = \M{
+    Ax_0 \\ 
+    0 \\  \\ \vdots \\ 
+  } \\ 
+  & \M{
+    I & 0 & 0 & 0 & \dots \\ 
+    -I & 0 & 0 & 0 & \dots \\ 
+    0 & I & 0 & 0 & \dots \\ 
+    0 & -I & 0 & 0 & \dots \\ 
+     &  & \vdots
+  }z \geq \M{u^{low} \\ -u^{high} \\ x^{low} \\ x^{high} \\ \vdots}
+\end{align*}
+
+More common in the industry is `Batch approach v2, "Reduced space"/"condensing"'
+\begin{align*}
+  x_1 &= Ax_0+Bu_0 \\ 
+  x_2 &= Ax_1+Bu_1 = A(Ax_0+Bu_0) + Bu_1 = A^2x_0+ABu_0+Bu_1 \\ 
+  x_3 &= Ax_2+Bu_2= A(\dots)+Bu_2 = A^3x_0 + A^2Bu_0 + ABu_1+Bu_2 \\ 
+  &\text{Can be written on matrix form} \\ 
+  \M{x_1 \\ x_2 \\ x_3 \\ \vdots} &= \M{A \\ A^2 \\ A^3 \\ \vdots}x_0 + \M{B & 0 & 0 & \dots \\ AB & B & 0 & \dots \\ A^2B & AB & B & \dots \\ \vdots & \vdots & \vdots & \ddots}
+  \M{u_0 \\ u_1 \\ \vdots \\ u_N}  \\ 
+  \rightarrow x &= S^{x}x_0 + S^{u} u
+\end{align*}
+
+Use the above formulation to write the dynamic optimization problem as
+\begin{align*}
+  \min \qquad& \frac{1}{2}(S^{x}x_0+S^{u}u)^{\top}\M{Q \\  & Q \\  &  & \ddots \\  &  &  & Q}(S^{x}x_0 + S^{u}u) + u^{\top}\M{R \\  & R \\  &  & \ddots \\  &  &  & R}u  \\ 
+  \text{s.t.}\qquad& \M{x^{low} \\ \vdots \\ x^{low}} \leq S^{x}x_0 + S^{u}u \leq \M{x^{high} \\ \vdots \\ x^{high}} \\ 
+  &\M{u^{low} \\ \vdots \\ u^{low}} \leq u \leq \M{u^{high} \\ \vdots  \\ u^{high}}
+\end{align*}
+
+
+\end{document}
