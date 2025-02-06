@@ -1,0 +1,145 @@
+\documentclass{article}
+
+\input{../../preamble.tex}
+
+\Lecture{Lecture 9: Linear Quadratic Control}{\today}
+
+\begin{document}
+
+\maketitle
+
+\section{Intro}
+
+Linear quadratic control (LQC) is dynamic optimization without (inequality) contraints. Also called linear quadratic regulator and 
+state feedback solution. 
+
+\begin{align*}
+  \min_z \sum_{t=0}^{N-1}\qquad & x_{t+1}^{\top}Qx_{t+1}+u_t^{\top}Ru_t       \\
+  \text{s.t.}\qquad             & x_{t+1} = Ax_t+Bu_t,\  t = 0,1,\dots,N-1    \\
+                                & z = (u_0, x_1, u_1,\dots,u_{N-1}x_N)^{\top}
+\end{align*}
+
+there are three approaces for solution. Full space and reduced space batch approaches from last time. These work with input- and state constraints.
+There is also a recursive approach. This is solved as a linear state feedback.
+
+The recursive approach can be found by writing up the KKT-conditions. This will show that the solution can be written as
+\[
+  u_t = -K_t x_t
+  .\]
+where the feedback gain matrix is derived by
+\begin{align*}
+  K_t & = R^{-1}B^{\top}P_{t+1}(I+BR^{-1}B^{\top}P_{t+1})^{-1}A, \qquad t = 0,\dots,N-1 \\
+  P_t & = Q + A^{\top}P_{t+1}(I+BR^{-1}B^{\top}P_{t+1})^{-1}A, \qquad t = 0,\dots,N-1   \\
+  P_N & = Q
+\end{align*}
+
+\section{Derive the recursive solution}
+
+The Lagrangian for the LQC (problem at the top):
+\[
+  \mathcal{L}(z, \lambda_1, \lambda_2,\dots,\lambda_N) = \sum_{t=0}^{N-1} (\frac{1}{2} x_{t+1}^{\top}Qx_t + \frac{1}{2}u_t^{\top}Ru_t) - \sum_{t=0}^{N-1}\lambda_{t+1}^{\top}(x_{t+1}- Ax_t - Bu_t)
+  .\]
+
+KKT:
+
+\begin{align}
+  \frac{\partial\mathcal{L}}{\partial u_t} & = Ru_t - B^{\top}\lambda_{t+1} = 0,\ t=0,\dots,N-1      \\
+  \frac{\partial\mathcal{L}}{\partial x_t} & = Qx_t-\lambda_t+A^{\top}\lambda_{t+1},\  t=1,\dots,N-1 \\
+  \frac{\partial\mathcal{L}}{\partial x_N} & = Q_N - \lambda_N = 0                                   \\
+  x_{t+1}                                  & = Ax_t+Bu_t,\  t=0,\dots,N-1
+\end{align}
+
+$(1) \implies u_t = -R^{-1}B^{\top}\lambda_{t+1} ,\ t=0,\dots,N-1$
+
+\medskip $(3) \implies \lambda_N = Qx_N$
+
+\medskip `Guess': $\lambda_t = P_t x_t ,\ P_t = P_t^{\top} > 0$
+
+\medskip $(4) \implies x_{t+1} = Ax_t - BR^{-1}B^{\top}P_{t+1}x_{t+1},\  t=0,\dots,N-1$
+
+Solve this for $x_{t+1}$:
+\begin{align*}
+   & (I+BR^{-1}B^{\top}P_{t+1})x_{t+1} = Ax_t,\ t=0,\dots,N-1        \\
+   & x_{_t+1} = (I+BR^{-1}B^{\top}P_{t+1})^{-1}Ax_t ,\ t=0,\dots,N-1
+\end{align*}
+\begin{align*}
+  (2) \implies & Qx_t - P_t x_t + A^{\top}P_{t+1} x_{t+1} = 0,\  t=1,\dots,N-1                          \\
+               & Qx_t - P_tx_t + A^{\top}P_{t+1}(I+BR^{-1}B^{\top}P_{t+1})^{-1}Ax_t = 0,\ t=1,\dots,N-1 \\
+               & [Q -P_t+A^{\top}P_{t+1}(I+BR^{-1}B^{\top}P_{t+1})^{-1}A]x_t = 0 ,\ t = 1,\dots,N-1     \\
+  \implies     & Q -P_t+A^{\top}P_{t+1}(I+BR^{-1}B^{\top}P_{t+1})^{-1}A = 0
+\end{align*}
+
+$(1) \implies u_t = R^{-1}B^{\top}P_{t+1}x_{t+1} = -R^{-1}B^{\top}P_{t+1}(I-BR^{-1}B^{\top}P_{t+1})^{-1}Ax_t$
+
+\paragraph{Summing up}: 
+
+\medskip KKT are satisfied if:
+\[
+  u_t = -K_t x_t
+.\] 
+where
+\begin{align*}
+  K_t &= R^{-1B^{\top}P_{t+1}}(I + BR^{-1}B^{\top}P_{t+1})^{-1}A \\ 
+  P_t &= Q + A^{\top}P_{t+1}(I+BR^{-1}B^{\top}P_{t+1})^{-1}A \\ 
+  P_N &= Q
+\end{align*}
+
+The last two equations here are called Discrete-time Riccati equation. 
+
+\medskip These conditions are sufficient. The above derivation only shows that they are necessary, and it is slightly harder to show that they 
+are necessary. 
+
+\section{Example}
+
+Given the problem 
+\[
+  \min \sum_{t=0}^{10} \frac{1}{2} x_{t+1}^2 + \frac{1}{2}r u_t^2 \qquad\text{s.t.}\qquad x_{t+1} = 1.2x_t + u_t,\  t=0,1,\dots,10
+.\] 
+
+This is a scalar example with one state. The horizon is N=11, and a tuning-variable r, allowing us to change the behaviour of the controller by making r larger or smaller.  
+
+Gives us these equations to solve:
+\begin{align*}
+  P_{11} &= Q = 1 \\ 
+  P_t &= 1 + 1.2P_{t+1}(1+ \frac{1}{r}P_{t+1})^{-1} \times 1.2 = 1 + 1.44 \frac{P_{t+1}}{r+P_{t+1}} ,\ t=1,\dots,10 \\ 
+  K_t &= \frac{1}{r}P_{t+1}(1+ \frac{1}{r}P_{t+1})^{-1}\times 1.2 = 1.2 \frac{P_{t+1}}{r+P_{t+1}} , ,\ t=1,\dots,10
+\end{align*}
+\begin{align*}
+  P_{11} &= 1,\  K_{10} = 1.2 \frac{P_{11}}{r+P_{11}} \implies u_{10} = -K_{10}x_{10} \\ 
+  P_{10} & = \dots ,\ K_9 = \dots \implies u_9 = -K_q x_q \\ 
+  \vdots & \\ 
+  P_2 &= \dots,\  K_1 = 1.2 \frac{P_2}{r+P_1} \implies u_1 = -K_1 x_1 \\ 
+  P_1 &= \dots ,\ K_0 = 1.2 \frac{P_1}{r+P_1} \implies u_0 = -K_0 x_0
+\end{align*}
+
+\section{What if the horizon goes to infinity?}
+
+The solution previously was to start at the final time, and calculate state backwards. This is not possible if we don't have the final state. 
+
+This can be done by first solving with some small horizon. Then increase the horizon and calculate again. It can be shown that the only 
+changes happen at the very end of the time horizon. This means that we can find this change (with the small time horizon) and use the steady state solution for infinite 
+time horizons. 
+
+This then simplifies quite nicely from the recursive functions above to
+\begin{align*}
+  u_t &= -Kx_t \\ 
+  \text{where} &  \\ 
+  K &= R^{-1}B^{\top}P(I + BR^{-1}B^{\top}P)^{-1}A \\ 
+  P &= Q + A^{\top}P(I + BR^{-1}B^{\top}P)^{-1}A
+\end{align*}
+
+The difference is of course the lack of subscript, since they are the same for all time.
+
+\paragraph{When does a solution exist?} When (A, B) is stabilizable. 
+
+\paragraph{When is the closed-loop stable?} $x_{t+1} = Ax_t + Bu_t,\  u_t = -Kx_t$ together becomes $x_{t+1} = (A-BK)x_t$. The closed-loop is stable when $\lambda_i(A-BK) \leq 1$. 
+This happens when (A, D) is detectable. D is `square root' of Q: $Q = D^{\top}D$ 
+
+\begin{itemize}
+  \item Stabilizable: All unstable modes are controllable (all uncontrollable modes are stable).
+  \item Detectability: All unstable modes are observable (all unobservable modes are stable).
+  \item Controllability implies stabilizability. 
+  \item Observability implies Detectability. 
+\end{itemize}
+
+\end{document}

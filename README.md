@@ -44,5 +44,13 @@ Work from the course Optimization and Control.
       <td>-</td>
       <td>-</td>
     </tr>
+    <tr>
+      <td>Week 5</td>
+      <td><a href="pdf/l9.pdf">06.02</a></td>
+      <td><a href="pdf/l10.pdf">07.02</a></td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
+    </tr>
   </tbody>
 </table>
