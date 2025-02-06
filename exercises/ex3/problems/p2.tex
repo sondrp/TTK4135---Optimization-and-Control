@@ -1,0 +1,62 @@
+%%% QUESTION %%%
+
+\begin{problem}{2: Linear programming problem}
+  Two reactsr, $R_1$ and $R_2$, produce two products A and B.
+  To make 1000 kg of A, 2 hours of $R_1$ and 1 hour of $R_2$ are required. To make 1000kg of B, 1 hour of $R_1$ and 3 hours of 
+  $R_2$ are reqauired. The order of $R_1$ and $R_2$ does not matter. $R_1$ and $R_2$ are available for 8 and 15 hours, respectively. 
+  The selling price of A is $\frac{3}{2}$ of the selling price of B (i.e., 50\% higher). 
+  We want ot maximize the total selling price of the two products. 
+  
+  \medskip (a) Formulate this problem as an LP in standard form. 
+  
+  \medskip (b) Make a contour plot and sketch the constraints.
+  
+  \medskip (c) Calculate the production of A and B that maximizes the total selling price. Use the simplex method, with startingpoint $x_1 = ?x_2 = 0$. 
+  Is the solution at a point of intersection between the constraints? Area all contraints active.
+  
+  \medskip (d) Mark all iteration s on the plot made in (b), as well as the iteration number.
+  
+  \medskip (e) Look at the iterations on the plot and the algorithm output. Does it agree with the theory?
+
+\end{problem}
+
+%%% SOLUTION %%%
+
+\SUBTASK{a}{Standard form}
+
+Standard form: 
+\[
+  \min c^{\top}x \qquad\text{s.t.}\qquad Ax = b,\ x \geq 0
+.\] 
+
+Where
+\[
+  c = \M{-3 & -2 & 0 & 0}^{\top},\  A = \M{2 & 1 & 1 & 0 \\ 1 & 3 & 0 & 1}^{\top} ,\ b = \M{8  & 15}^{\top}
+.\]
+\newpage
+\SUBTASK{b}{Contour plot}
+
+\begin{center}
+  \incfig{contour}{0.6}
+\end{center}
+
+\SUBTASK{c}{Solution}
+
+The simplex algorithm gives these ouputs:
+\begin{itemize}
+  \item $x^{(0)} = \M{0 & 0 & 8 & 15}^{\top}$
+  \item $x^{(1)} = \M{4 & 0 & 0 & 11}^{\top}$
+  \item $x^{(2)} = \M{1.8 & 4.4 & 0 & 0}^{\top}$
+\end{itemize}
+
+The equality constraints are active. The non-negativity constraints are not active. 
+
+\SUBTASK{d}{Iteration points}
+
+\begin{center}
+  \incfig{iteration}{0.6}
+\end{center}
+
+\SUBTASK{e}{Theory}
+
+I am not able to detect anything that does not follow the theory.

@@ -1,0 +1,49 @@
+%%% QUESTION %%%
+
+\begin{problem}{3: QP and KKT}
+
+  A quadratic program (QP) can be formulated as
+  \begin{align*}
+    \min_x  \qquad& q(x) = \frac{1}{2}x^{\top}Gx+x^{\top}c \\ 
+    \text{s.t.}\qquad & a_i^{\top}x = b_i,\  i\in \mathcal{E} \\ 
+    &a_i^{\top} x\geq b_i,\  i\in \mathcal{I}
+  \end{align*}
+
+  where G is a symmetric $n\times n$ matrix, $\mathcal{E}$ and $\mathcal{I}$ are finite sets 
+  of indices, and c, x, and $\{a_i\},\  i\in \mathcal{E}\cup\mathcal{I}$ are vectors in $\mathcal{R}^{n}$ 
+
+  \medskip (a) Define the active set $\mathcal{A}(x^*)$ for problem (2).
+  
+  \medskip (b) Derive the KKT conditions for problem (2), using the active set in the formulation.
+
+\end{problem}
+
+%%% SOLUTION %%%
+
+\SUBTASK{a}{Active set}
+
+The active set includes the indices of active constraints. It looks like
+\[
+  \mathcal{A}(x^*) = \{i\in \mathcal{E} \cup \mathcal{I} | a_i^{\top}x^* = b_i\}
+.\] 
+
+\SUBTASK{b}{KKT}
+
+The Lagrangian
+\[
+  \mathcal{L}(x, \lambda) = q(x) - \sum_{i\in \mathcal{E} \cup \mathcal{I}}\lambda_i (a_i^{\top}x - b_i)
+.\] 
+
+$\lambda_i$ for negativity constraints are 0 (these constraints are not active). We get the derivate of the Lagrangian:
+\begin{align*}
+  \nabla_x \mathcal{L}(x^*, \lambda^*) &= \frac{1}{2}(Gx^* + G^{\top}x^*) + c - \sum_{i \in\mathcal{A}(x^*)}\lambda_i^*a_i ,\ G^{\top} = G \\ 
+  &= Gx^* + c - \sum_{i \in\mathcal{A}(x^*)} \lambda_i^*a_i
+\end{align*}
+
+The remaining KKT conditions say that constraints must be respected, and that $\lambda$ for active constraints must be non-negative. Summarized we get:
+\begin{align*}
+  Gx^* + c - \sum_{i\in \mathcal{A}(x^*)} \lambda_i^*a_i &= 0 \\ 
+  a_i^{\top}x^* &= b_i \qquad\text{(active constraints)}  \\ 
+  a_i^{\top}x^* &\geq b_i \qquad\text{(non-active constraints)} \\ 
+  \lambda_i^* &\geq 0\qquad\text{(active constraints)}
+\end{align*}

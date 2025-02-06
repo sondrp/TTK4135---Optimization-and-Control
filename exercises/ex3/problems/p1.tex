@@ -1,0 +1,101 @@
+%%% QUESTION %%%
+
+\begin{problem}{1: LP and duality}
+
+Consider the linear programming problem
+\begin{align*}
+  \min_{x\in\mathcal{R}^{4}} \qquad & -2x_1 + 3x_2        \\
+  \text{s.t.}\qquad                 &
+  -x_1+x_2-x_3 = 1                                        \\
+                                    & 3x_1-x_2+x_4 \geq 8 \\
+                                    & x_1\geq 0           \\
+                                    & x_3 \geq 0
+\end{align*}
+
+\medskip (a) Transform the LP to standard form, and write down the matrix A and vectors b and c.
+
+\medskip (b) Write down the dual form of the standard form LP, and solve it.
+
+\medskip (c) Use duality result to calcualte a solution to the original LP.
+
+\end{problem}
+
+%%% SOLUTION %%%
+
+\SUBTASK{a}{Standard and matrix form}
+
+Here we have to define a positive and negative version of all the variables, so let $x_2 = x_2^{+} - x_2^{-},\  x_4 = x_4^{+}- x_4^{-}$.
+Also include the slack variable $z$ as always. Now minimize over $x' = \M{x_1 & x_2^{+} & x_2^{-} & x_3 & x_4^{+} & x_4^{-}}^{\top}$ and z.
+Standard form:
+\begin{align*}
+  \min_{x',\  z} \qquad & -2x_1 + 3x_2^{+}- 3x_2^{-}                \\
+  \text{s.t.}\qquad     & -x_1+x_2^{+}-x_2^{-}-x_3 = 1              \\
+                        & 3x_1-x_2^{+}+x_2^{-}x_4^{+}-x_4^{-}-z = 8 \\
+                        & x',\  z \geq 0
+\end{align*}
+
+On matrix form:
+\[
+  \min_{x\in\mathcal{R}^{7}} c^{\top}x \qquad\text{s.t.}\qquad Ax = b ,\ x \geq 0
+  .\]
+where
+\[
+  c^{\top} = \M{-2 & 3 & -3 & 0 & 0 & 0 & 0} ,\ A = \M{-1 & 1 & -1 & -1 & 0 & 0 & 0 \\ 3 & -1 & 1 & 0 & 1 & -1 & -1} ,\ b = \M{1 \\ 8}
+  .\]
+
+\SUBTASK{b}{Dual}
+
+Dual form:
+\[
+  \max_{y\in \mathcal{R}^{2}}b^{\top}y \qquad\text{s.t.}\qquad A^{\top}y \leq c
+  .\]
+
+where y is just $\M{y_1 & y_2}^{\top}$
+
+It is possible to determine y from this from the dual. Writing out $A^{\top}y \leq 0$ we get
+\begin{align*}
+  -y_1 + 3y_2 & \leq -2 \\
+  y_1-y_2     & \leq 3  \\
+  -y_1 + y_2  & \leq -3 \\
+  -y_1        & \leq 0  \\
+  y_2         & \leq 0  \\
+  -y_2        & \leq 0  \\
+  -y_2        & \leq 0  \\
+\end{align*}
+
+From the last rows we can see that $y_2 \leq_0 ,\ y_2 \geq 0 \implies y_2 = 0$. Now the inequalities can be simplified to 
+\begin{align*}
+  y_1 \geq 2 \\ 
+  y_1 \leq 3 \\ 
+  y_1 \geq 3 \\ 
+  y_1 \geq 0
+\end{align*}
+
+Clearly $y_1 = 3$. This gives us a solution to the dual (and primal), $b^{\top}y = \M{1 & 8}\M{3 & 0} = 3$.
+
+\SUBTASK{c}{Solution to the primal}
+
+The result from (b) means that $-2x_1 +3x_2 = 3$. Putting this together with the other restrictions we get
+\begin{align*}
+  -2x_1+3x_2 &= 3 ,\ (i)  \\ 
+  -x_1+x_2-x_3 &= 1 ,\ (ii)  \\ 
+  3x_1-x_2+x_4 &\geq 8 ,\ (iii)  \\ 
+  x_1 &\geq 0,\  (iv) \\ 
+  x_3 &\geq 0,\ (v)
+\end{align*}
+
+Taking (i) - 2(ii) we get $x_2 + 2x_3 = 1$.  Since $x_3 \geq 0$, $x_2 \geq 1$. Using this in (i) we see that $x_1 = 0$, $x_2 = 1$.
+
+\medskip With this we can simplify the restrictions and get
+\begin{align*}
+  1 - x_3 &= 1 \\ 
+  3x_1 -1 + x_4 &\geq 8 \\ 
+  x_3 &\geq 0
+\end{align*}
+
+$x_3 = 0$, leaving the last restriction $x_4 \geq 9$. 
+
+The final solution is then 
+\[
+  x^* = \M{0 & 1 & 0 & x_4}^{\top}\qquad x_4 \geq 9
+.\] 
