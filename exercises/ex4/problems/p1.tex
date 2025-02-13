@@ -1,0 +1,135 @@
+%%% QUESTION %%%
+
+\begin{problem}{1: Quadratic programming}
+  (a) Under which conditions is a QP-problem convex? Why is convexity an important property?
+  
+  \medskip (b) Go through the proof of Theorem 16.2. If the lemma $Z^{\top}GZ \geq 0$ instead of $Z^{\top}GZ > 0$, how would the wording of the proof change?
+  
+  \medskip (c) Based on Example 16.4, show how Algorithm 16.3 finds the solution if the starting point is 
+  $x = \M{2 & 0}^{\top}$ and we assume that only the constraint $-x_1+2x_2+2\geq 0$ is active. This means $\mathcal{W}_0 = \{3\}$. 
+  
+  \medskip (d) Define the dual problem for the QP-problem in Example 16.4. 
+  
+  \medskip (e) Explain how the dual optimization problem can be used to give an over-estimate of $q(\overline{x}) - q(x^*)$, when 
+  $x^*$ is not known. 
+\end{problem}
+
+%%% SOLUTION %%%
+
+\SUBTASK{a}{Convexity}
+
+Convexity is an important property because local solutions are guaranteed to be global solutions in convex optimization problems. They are simply much easier to solve. 
+
+QP-problems are convex when the Hessian matrix G is positive semidefinite. 
+
+\SUBTASK{b}{Proof}
+
+If we assume $Z^{\top}GZ > 0$, this means the quadratic form ($Z^{\top}GZ$) is positive definite, ensuring that $q(x) > q(x^*)$ for any $x  \neq x^*$, which guarantees that $x^*$ is a strict 
+local minimizer. 
+
+On the other hand, if we change the assumption to $Z^{\top}GZ \geq 0$, we are now only assuming positive semidefiniteness. 
+This means that some directions in the same space might have zero curvature, allowing $q(x)$ to be the same as $q(x^*)$ for certain small changes. This is a non-strict local minimum, $q(x) \geq q(x^*)$ but there 
+
+\SUBTASK{c}{Solution}
+
+The problem on matrix form is 
+\[
+  \min_x \qquad \frac{1}{2}x^{\top}Gx + c^{\top}x \qquad\text{s.t.}\qquad Ax = b
+.\] 
+
+where
+\[
+  G = \M{2 & 0 \\ 0 & 2},\  c = \M{-2 \\ -5},\ A = \M{1 & -2 \\ -1 & -2 \\ -1 & 2 \\ 1 & 0 \\ 0 & 1},\  b = \M{-2 \\ -6 \\ -2 \\ 0 \\ 0}  
+.\] 
+
+\paragraph{Iteration} k = 0
+
+\begin{itemize}
+  \item $x^{(0)} = \M{2 & 0}^{\top}$
+  \item $\mathcal{W}^{(0)} = \{3\}$
+  \item $A^{(0)} = \M{-1 & 2}$
+  \item $b^{(0)} = 0$
+  \item $g^{(0)\top} = Gx^{(0)} + c = \M{2 & -5}^{\top}$
+\end{itemize}
+
+Calculate x and lambda (dropping superscript on A and b here):
+
+\begin{align*}
+  p^{(0)} &= -G^{-1}(I - A^{\top}(AG^{-1}A^{\top})^{-1}AG^{-1})c + G^{-1}A^{\top}(AG^{-1}A^{\top})^{-1}b = \M{0.2 \\ 0.1}  \\ 
+  \lambda^{(0)} &= -(AG^{-1}A^{\top})^{-1}(AG^{-1}c + Ax) = -2.4
+\end{align*}
+
+Now,
+\[
+  x^{(1)} = x^{(0)} + p^{(0)} = \M{2 \\ 0} + \M{0.2 \\ 0.1} = \M{2.2 \\ 0.1}
+  .\] 
+  which is a feasible point. 
+  
+  \paragraph{Iteration} k = 1
+  \begin{itemize}
+    \item $g^{(1)} = Gx^{(1)} + c = \M{2.4 & -4.8}^{\top}$
+  \end{itemize}
+  
+  \begin{align*}
+    p^{(1)} &= -G^{-1}(I - A^{\top}(AG^{-1}A^{\top})^{-1}AG^{-1})c + G^{-1}A^{\top}(AG^{-1}A^{\top})^{-1}b \approx \M{0 \\ 0}  \\ 
+    \lambda^{(1)} &= -(AG^{-1}A^{\top})^{-1}(AG^{-1}c + Ax) = -2.4
+  \end{align*}
+  
+  \paragraph{Iteration} k = 2
+  
+  \begin{itemize}
+    \item $x^{(2)} = x^{(1)} = \M{2.2 & 0.1}^{\top}$
+    \item $\mathcal{W}^{(2)} = \emptyset$
+    \item $g^{(2)\top} = Gx^{(2)} + c = \M{2.4 & -4.8}^{\top}$
+  \end{itemize}
+
+  \begin{align*}
+    p^{(2)} &= -G^{-1}(I - A^{\top}(AG^{-1}A^{\top})^{-1}AG^{-1})c + G^{-1}A^{\top}(AG^{-1}A^{\top})^{-1}b = \M{-1.2 \\ 2.4}  \\ 
+  \end{align*}
+
+This is not a valid point. The blocking constraint is constraint 1, with $\alpha_2 = \frac{2}{3}$.
+
+\paragraph{Iteration} k = 3
+
+\begin{itemize}
+  \item $x^{(3)} = x^{(1)} + \alpha_2p_2 = \M{1.4 & 1.7}^{\top}$
+  \item $\mathcal{W}^{(3)} = \{1\}$
+  \item $A^{(3)} = \M{1 & -2}$
+  \item $b^{(3)} = -2$
+  \item $g^{(3)\top} = Gx^{(3)} + c = \M{0.8 & -1.6}^{\top}$
+\end{itemize}
+
+\begin{align*}
+  p^{(3)} &= -G^{-1}(I - A^{\top}(AG^{-1}A^{\top})^{-1}AG^{-1})c + G^{-1}A^{\top}(AG^{-1}A^{\top})^{-1}b = \M{0 \\ 0}  \\ 
+  \lambda^{(3)} &= -(AG^{-1}A^{\top})^{-1}(AG^{-1}c + Ax) = 0.8
+\end{align*}
+
+So we can conclude that this is the answer. 
+
+\SUBTASK{d}{The dual}
+
+The values are
+\begin{align*}
+  \min_x \qquad &q(x) = \frac{1}{2}x^{\top}Gx + x^{\top}c \\ 
+  \text{s.t.}\qquad &Ax-b \geq 0
+\end{align*}  
+where
+\[
+  G = \M{2 & 0 \\ 0 & 2},\ A = \M{1 & -2 \\ -1 & -2 \\ -1 & 2 \\ 1 & 0 \\ 0 & 1},\ c = \M{-2 \\ -5},\ b = \M{-2 \\ -6 \\ -2 \\ 0 \\ 0}
+.\] 
+
+The dual becomes
+\begin{align*}
+  \max_{x, \lambda}\qquad & \frac{1}{2}x^{\top}Gx + x^{\top}c - \lambda^{\top}(Ax-b) \\ 
+  \text{s.t.}\qquad & Gx + c - A^{\top}\lambda = 0 \\ 
+  &\lambda \geq 0
+\end{align*}
+
+\SUBTASK{e}{Dual as over-estimate}
+
+The dual optimization problem can be used to give an over-estimate of $q(\overline{x}) - q(x^*)$ when $x^*$ is not known. 
+Any feasible $\overline{x}$ and any $\overline{\lambda} \geq 0$ will give $f(\overline{\lambda}) \leq q(x^*)$. Therefore, 
+\[
+  q(\overline{x}) - q(x^*) \leq q(\overline{x}) - f(\overline{\lambda})
+.\] 
+

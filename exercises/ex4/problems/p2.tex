@@ -1,0 +1,74 @@
+%%% QUESTION %%%
+
+\begin{problem}{1: Production Planning and Quadratic Programming}
+  Two reactors $R_1$ and $R_2$ produce two products A and B. To make 1000kg of A, 2 hours of $R_1$ and 1 hour of $R_2$ are required. 
+  To make 1000kg of B, 1 hour of $R_1$ and 3 hours of $R_2$ are required. The order of $R_1$ and $R_2$ does not matter. $R_1$ and $R_2$ are available for 8 and 15 hours, respectively. 
+  We want to maximize the profit from selling the two products. 
+
+  The profit now depends on the production rate:
+  \begin{itemize}
+    \item the profit from A is $3-0.4x_1$ per tonne produced,
+    \item the profit from B is $2-0.2x_2$ per tonne produced,
+  \end{itemize}
+
+  where $x_1$ is the production of product A and $x_2$ is the production of product B (both in number of tonnes). 
+  
+  \medskip (a) Formulate this as a quadratic program.
+  
+  \medskip (b) Make a contour plot and sktech constraints. 
+  
+  \medskip (c) Find the production of A and B that maximizes the total profit. 
+  
+  \medskip (d) The solution is calculated by an active-set method. Explain how the method works based on the sequence of iterations from (c). 
+  
+  \medskip (e) Compare the solution in (c) with Problem 2 (c) in Exercise 3 and comment. 
+
+\end{problem}
+
+%%% SOLUTION %%%
+
+\[
+  f(x) = -[(3-0.4x_1)x_1 + (2-0.2x_2)x_2] = -(3-0.4x_1)x_1-(2-0.2x_2)x_2 = \frac{1}{2}x^{\top}\M{0.8 & 0 \\ 0 & 0.4}x + \M{-3 & -2}x
+.\] 
+
+
+\begin{align*}
+  \min_x \qquad& q(x) = \frac{1}{2}x^{\top}Gx+x^{\top}c \\ 
+  \text{s.t.}\qquad & -2x_1-x_2 \geq -8 \\ 
+  &-x_1-3x_2 \geq -15 \\ 
+  &x_1\geq 0 \\ 
+  &x_2 \geq 0
+\end{align*}
+
+\SUBTASK{b}{Contour}
+
+\begin{center}
+  \incfig{contour}{0.6}
+\end{center}
+
+\SUBTASK{c}{Solution}
+
+Plugging the values from (a) into the script gave these outputs:
+
+\begin{itemize}
+  \item $\M{x_1^{(0)} & x_2^{(0)}}^{\top} = \M{0 & 0}^{\top}$
+  \item $\M{x_1^{(1)} & x_2^{(1)}}^{\top} = \M{2.4 & 3.2}^{\top}$
+  \item $\M{x_1^{(2)} & x_2^{(2)}}^{\top} = \M{2.25 & 3.5}^{\top}$
+\end{itemize}
+
+\begin{center}
+  \incfig{contour_steps}{0.5}
+\end{center}
+
+The solution is not found at an intersection. Only one constraint is active.
+
+\SUBTASK{d}{Active-set method}
+
+Is an iterative approach to solving QP problems by choosing a subset of the constraints to be active. 
+This gives us a reduced, equality constrained problem that we can solve. This solution can be checked for optimality, and if it is not optimal, add or remove constraints 
+from the active set before repeating the process.  
+
+\SUBTASK{e}{Compare with LP}
+
+The solution in exercise 3 used the fact that an optimal solution had to lie in an intersection, and could therefore iterate over those. Here we cannot make that assumption
+and must therefore use a completely different method for solving the problem. We see that the second and third points differ. 
