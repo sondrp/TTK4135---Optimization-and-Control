@@ -1,0 +1,132 @@
+\documentclass{article}
+
+\input{../../preamble.tex}
+
+\Lecture{Lecture 10: Model Predictive Control}{February 6, 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Intro}
+
+Model predictive control started in chemical process control. Before MPC it was common to have multiple single loop
+pid controllers. MPC then came to replace these with a single optimization algorithm. But MPC is used in a wide range of 
+application. Some of these are time sensitive, and require the optimal solution to be found fast. 
+
+\paragraph{Open-loop optimization with linear state-space model}
+
+\begin{align*}
+  \min_{z\in \mathbb{R}^{n}} f(z) &= \sum_{t=0}^{N-1} \frac{1}{2} x_{t+1}^{\top}Q_{t+1}x_{t+1} + d_{x,t+1}x_{t+1} + \frac{1}{2}u_t^{\top}R_t u_t + d_{u,t}u_t + \frac{1}{2} \Delta u_t^{\top}S \Delta u_t \\ 
+  \text{subject to}& \\ 
+  x_{t+1} &= A_t x_t + B_t u_t  \\ 
+  x^{\text{low}} &\leq x_t \leq x^{\text{high}} \\ 
+  u^{\text{low}} & \leq u_t \leq u^{\text{high}} \\ 
+  -\Delta u^{\text{high}} & \leq \Delta u_t \leq \Delta u^{\text{high}}  \\ 
+\end{align*}
+
+The MPC is a QP, which can be solved with techniques from previous lectures. 
+
+\paragraph{Model predicive control principle}- 
+
+\medskip Is that MPC works by measuring the plant state, solve the optimization problem, and then find a sequence of inputs (1st, 2nd, ...) until the end 
+of the horizon. Then you use the first of these inputs. 
+
+This might at first seem like a lot of wasted computing time, since we are only using some of the results. The point is that we can now use these results to compare. This introduces feedback. 
+
+\section{The Chess analogy}
+
+\begin{center}
+  \incfig{chess}{0.7}
+\end{center}
+
+The optimization algorithm will consider many possible futures, and land on the optimal one. To pick
+and optimal move, you have to consider a series of moves, and play the first one in sequence. If the opponent plays according to the sequence, 
+all is good. But if they should pick another move, the MPC must run the optimization algorithm again. It obviously does not make sense to blindly follow 
+the original plan without caring about the opponents moves. 
+
+This might not be the best analogy, but since it is about chess I had to include it. 
+
+\section{The feasibility problem}
+
+Inequality constraints on states may imply that for some $x_0$, there are no solution to the MPC QP. 
+
+\begin{align*}
+  \min_z \qquad& \sum_{t=0}^{N-1} \frac{1}{2} x_{t+1}^{\top}Qx_{t+1} + \frac{1}{2} u_t^{\top}Ru_t \\ 
+  \text{s.t.}\qquad& x_{t+1} = Ax_t + Bu_t  \\ 
+  & x^{\text{low}} \leq t_t \leq x^{\text{high}} \\ 
+  & u^{\text{low}} \leq u_t \leq u^{\text{high}}
+\end{align*}
+
+How can we change this in order to always have a solution? Introduce `slack' variables ($\epsilon$). These are added to the boundary conditions, and we get
+
+\begin{align*}
+  \min_{x, \epsilon} \qquad& \sum_{t=0}^{N-1} \frac{1}{2} x_{t+1}^{\top}Qx_{t+1} + \frac{1}{2} u_t^{\top}Ru_t + \delta ^{\top} \epsilon \\ 
+  \text{s.t.}\qquad& x_{t+1} = Ax_t + Bu_t  \\ 
+  -\epsilon + & x^{\text{low}} \leq t_t \leq x^{\text{high}} + \epsilon \\ 
+  & u^{\text{low}} \leq u_t \leq u^{\text{high}}
+\end{align*}
+
+The epsilon should be as small as possible, so a weight for this is added in the objective function. 
+
+\medskip There is a concept called `Exact penalty' which says that $\delta$ is large enough $ \implies \epsilon = 0$ whenever possible. 
+
+\section{Is MPC always stable?}
+
+Design MPC for $x_{t+1} = 1.2x_t + u_t$, no constraint, $N = 2$. The MPC problem looks like
+
+\begin{align*}
+  \min_{u_0, u_1, x_1, x_2}\qquad& \sum_{t = 0}^{1} \frac{1}{2} x_{t+1}^2 + \frac{r}{2} u_t^2  \\ 
+  \text{s.t.}\qquad& x_1 = 1.2x_0 + u_0 \\ 
+  & x_2 = 1.2 x_1 + u_1
+\end{align*}
+
+with a tuning varialbe r. This problem is small enough to solve directly. 
+\begin{align*}
+  x_2 &= 1.2(1.2x_0 + u_0) + u_1 = 1.44x_0 + 1.2u_0 + u_1 \\ 
+  &\text{Restate the optimization problem in terms of u only} \\ 
+  \min_{x_0, u_1} \qquad & \frac{1}{2}(1.2x_0+u_0)^2 + \frac{1}{2}(1.44x_0 + 1.2u_0 + u_1)^2 + \frac{r}{2}u_0^2 + \frac{r}{2}u_1^2 = f(u_0, u_1)
+\end{align*}
+
+It can be shown that f is convex here, so the solution is found by $\frac{\partial f}{\partial u_0} = 0$, $\frac{\partial f}{\partial u_1} = 0$.
+
+In the end we get that $u_0 = - \frac{1.2+2.928r}{1+3.44r+r^2}x_0$. 
+
+\medskip The point is that when r gets to big here, the MPC closed loop becomes unstable. So MPC is not automatically stable. 
+
+\section{MPC and stability}
+
+Nominal vs robust stability
+\begin{itemize}
+  \item Nominal stability: Stability when optimization model = plant model. No `model-plant mismatch', no disturbances.
+  \item Robust stability: Stability when optimization model $\neq$ plant model. `Model-plant mismatch' and/or disturbances
+\end{itemize}
+
+Requirements for nominal stability (as for infinite horizon LQ control):
+\begin{itemize}
+  \item Stabilizability ( (A, B) stabilizable )
+  \item Detectability ( (A, D) detectable )
+  \begin{itemize}
+    \item D is a matrix such that $Q = D^{\top}D$ (that is, `D is matrix square root of Q')
+    \item Detectability: No modes can grow to infinity without being `visible' through Q
+  \end{itemize}
+\end{itemize}
+
+\paragraph{How to achieve nominal stability?}- 
+
+\medskip Three different theoretical solutions: 
+\begin{itemize}
+  \item Choose prediction horizon equal to infinity (N = $\infty$). This is usually not possible
+  \item For given N, design Q and R such that MPC is stable. This is difficult in general. Not recommended.
+  \item Change the optimziation problem. Add a terminal cost and terminal constraint to the optimization problem. 
+\end{itemize}
+
+In practice, you can choose N that is large enough. Two rules of thumb: (i) choose N longer than the `dominating dynamics' and/or (ii) choose N large enough such that 
+open-loop predictions resemble closed-loop. 
+
+\paragraph{Why MPC over PID control?}- 
+
+\medskip MPC handles constraints in a transparent way. Handling the constraints with PID can require a lot of logic, which might be hard to understand. 
+MPC is also multivariable. For PID controllers, you might have problems where one input strongly affects other states.  
+
+\end{document}
