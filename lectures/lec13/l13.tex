@@ -1,0 +1,143 @@
+\documentclass{article}
+
+\input{../../preamble.tex}
+
+\lstset{basicstyle=\ttfamily, escapeinside={(*@}{@*)}}
+
+\Lecture{Lecture 13: Unconstrained Optimization}{Feb 20, 2025}
+
+\begin{document}
+
+\maketitle
+
+Now we are going back to the basics. This could have been taught before constrained optimization, but the order
+was switched in order to be prepared for the labs in time.
+
+\paragraph{Outline}
+
+\begin{itemize}
+  \item Optimality conditions for unconstrained optimization.
+  \item Ingredients in gradient descent algorithms for unconstrained optimization
+        \begin{itemize}
+          \item Descent directions (steepest descent, Newton, Quasi-Newton)
+          \item How far to walk in descent direction (line search, trust region)
+          \item Termination criteria
+        \end{itemize}
+  \item Scaling
+\end{itemize}
+
+\paragraph{Example use}- Machine Learning
+
+\medskip Unconstrained optimization can be used to learn from data and make predictions. Linear regression for example,
+the most basic ML algorithm. Linear least squares has an explicit solution. Nonlinear least squares is a little more complicated. The point is that least squares can be formulated
+as an optimization problem. Given a bunch of data, we want to find the best coefficients a, b to get the lowest squared distance to actual data points.
+
+\begin{align*}
+  \min_{a, b}\qquad & \sum_{i = 1}^{n}(y_i - ax_i - b)^2
+\end{align*}
+
+When the line is linear, we can write the objective function as
+\begin{align*}
+  \min_{\theta}\qquad & (y-x\theta)^{\top}(y-x\theta) \\
+                      & y = \M{y_1                    \\ y_2 \\ \vdots  \\ y_n},\ x = \M{x_1 \\ x_2 \\ \vdots \\ x_n} ,\ \theta = \M{a \\ b}
+\end{align*}
+
+This is nice and easy, so we can find a direct solution: $\theta = (x^{\top} x)^{-1}x^{\top}y$. In machine learning however, the functions are not linear, so more powerful methods are required.
+
+\section{Unconstrained Optimization}
+
+Before we had constrained optimization
+
+\begin{align*}
+  \min_{x \in \mathbb{R}^{n}} f(x) \text{ s.t. } \left\{
+  \begin{aligned}
+    c_i(x) = 0,\ i \in \mathcal{E} \\
+    c_i(x) \geq 0,\  i  \in\mathcal{I}
+  \end{aligned}
+  \right.
+\end{align*}
+
+Now we take away all the constraints, and only look at $\min_{x \in \mathbb{R}^{n}} f(x)$. Note: from now on me assume is $f(x)$ is `smooth': $f \in C^{1}$ or $f \in \mathcal{C}^{2}$. That is
+$\nabla f$ exists and is continuous and $\nabla f^2$ exists and is continuous.
+
+What is a solution? Same as before. $x^*$ is a global solution : $f(x^*) \leq f(x),\  \forall x$.
+The local solution is also the same as before. $x^*$ is a local solution: $f(x^*) \leq f(x),\  \forall x  \in\mathcal{N}(x)$.
+
+\paragraph{Necessary condition for optimality}- $x^*$ is a local solution and $f \in C^{1} \implies \nabla f(x^*) = 0$.
+
+\paragraph{Taylor expansions}
+
+The form familiar from calculus:
+\[
+  f(x) = f(a) + (x - a)f'(x) + \frac{1}{2}(x - a)^2 f''(a) + \dots
+  .\]
+
+More useful in this course:
+\[
+  f(x + h) = f(x) + hf'(x) + \frac{1}{2}h^2 f''(x) + \dots
+  .\]
+
+These are equivalent by change of variables. Taylor's theorem is that if f is continuously differentiable, then
+\[
+  f(x+p) = f(x) + \nabla_{f}(x+tp)^{\top}p,\qquad\text{for some }t \in (0, 1)
+  .\]
+
+For second order (f is twice continuously differentiable):
+\[
+  f(x+p) = f(x) + \nabla f(x)^{\top} p + \frac{1}{2}p^{\top} \nabla ^2 f(x+tp)p,\  \qquad\text{for some } t  \in (0, 1)
+.\]
+
+\paragraph{Sufficient conditions for optimality}- $\nabla f(x^*) = 0$ and $\nabla ^2 f(x^*) > 0 \implies x^*$ strict local solution. 
+
+\section{General algorithm}
+
+For solving $\min_{x} f(x)$.
+
+\medskip
+\lstset{basicstyle=\ttfamily}
+\begin{lstlisting}
+1. Initial guess (*@$x_0$@*), k = 0
+2. While termination criteria not fulfilled:
+3.  Find descent direction (*@$p_k$@*) (in (*@$x_k$@*))
+4.  Step along (*@$p_k$@*) to (*@$x_{k+1}$@*): (*@$x_{k+1}$@*) = (*@$x_k + \alpha_k p_k$@*)
+5.  k = k + 1
+6. end  
+\end{lstlisting}
+
+\paragraph{Termination criteria}- Given a small tolerance $\epsilon > 0$. Here is a list of different criteria:
+\begin{itemize}
+  \item $||x_k - x^*|| \leq \epsilon$ or $|f(x_k) - f(x^*) | \leq \epsilon$ (not possible, we don't know $x^*$)
+  \item $||\nabla f(x_k)|| \leq \epsilon$
+  \item $||x_k - x_{k-1}|| \leq \epsilon$
+  \item $|f(x_n) - f(x_{n-1})| \leq \epsilon$
+  \item $k > k_{max}$
+\end{itemize}
+
+\paragraph{Descent directions}- There are different ways to pick a direction to move:
+\begin{itemize}
+  \item Steepest descent: $p = - \nabla f(x_k)$
+  \item Newton: approximate $f(x)$ around $x_k$. $f(x_k+p) \approx + \nabla f(x_k)^{\top}p + \frac{1}{2}p^{\top}\nabla ^2 f(x_k)p := m_k(p)$.
+  \item Quasi-Newton: the same as Newton, but use an approximation for the Hessian. 
+\end{itemize} 
+
+We call the function $m_k(p)$ the model function. We want to find the p that minimize the model function:
+\begin{align*}
+  \min_p \qquad& m_k(p) \rightarrow \nabla_{p} m_k(p) = 0  \\ 
+  & \nabla_p m_k(p) = \nabla f(x_k) + \nabla ^2 f (x_k) p = 0  \\ 
+  \rightarrow & p = -[\nabla ^2f(x_k)]^{-1} \nabla f(x_k)    
+\end{align*}
+
+How does the Newton direction differ from the steepest descent? When the function is quadratic, the Newton direction goes directly towards the local optimum for a quadratic approximation. T
+
+\paragraph{Step length}- How far should we walk along $p_k$? This is also known as globalization strategies - making things work when we are far from the optimum. 
+
+\begin{itemize}
+  \item Line search: Find $\alpha$ that approximately solve $\min_{\alpha} f(x_k + \alpha p_n) \rightarrow \alpha_k$
+  \item Trust region (not covered in this course)
+\end{itemize}
+
+It's hard to say which one of these methods is the best. It depends on the problem. 
+
+
+
+\end{document}

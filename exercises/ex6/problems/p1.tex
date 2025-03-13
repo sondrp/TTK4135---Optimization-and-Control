@@ -1,0 +1,51 @@
+%%% QUESTION %%%
+
+\begin{problem}{1: Finite-Horizon LQR}
+
+Many mechanical systems have a structure that resembles what we get with Newton's second law of motion $ma = F$
+
+\medskip (a) Let $m = 1,\ F = u$, and let $x_1$ represent position and $x_2$ represent velocity. Write Newton's 
+second law on state-space form $\dot{x} = A_c x + b_c u$.
+
+\medskip (b) Using a sampling interval of T = 0.5,
+\[
+  A = e^{A_c T},\  b = \left(\int_{0}^{T}e^{A_c \tau}dt\right)b_c
+.\] 
+show that Newton's second law can be written in discrete time as 
+\[
+  x_{t+1} = Ax_t + bu_t,\  A = \M{1 & 0.5 \\ 0 & 1},\  b = \M{0.125 \\ 0.5}
+.\] 
+
+\medskip (c) Let the cost function for optimal control be given by 
+\[
+  f(z) = \frac{1}{2}\sum_{t=0}^{N-1} \{x_{t+1}^{\top} Q x_{t+1} + u_t^{\top} R u_t\}
+.\] 
+
+with 
+\[
+  Q = \M{2 & 0 \\ 0 & 2} ,\ R = 2
+.\] 
+
+and where $z = \M{x_1^{\top},\dots,x_N^{\top},u_0^{\top},\dots,u_{N-1}^{\top}}^{\top}$. Formulate the Riccati equation for 
+this problem and show how the solution of the Riccati equation can be used to find a state-feedback controller that minimizes $f(z)$. 
+
+\medskip (d) Let $N \rightarrow \infty$. SOlve the stationary Riccati equation and find the optimal feedback law $u_t = -Kx_t$.
+
+\medskip (e) In general, does the type of controller found in the previous problem give stable feedback system?
+
+\end{problem}
+
+%%% SOLUTION %%%
+
+\SUBTASK{a}{Newton state-space}
+
+$ma = F \rightarrow a = u$. Since $a = \ddot{x_1} = \dot{x_2}$, we can let $x = \M{x_1 \\ x_2}$, which means $\dot{x} = \M{\dot{x_1} \\ \dot{x_2}} = \M{x_2 \\ a} = \M{x_2 \\ u}$.
+Writing this result on state-space form gives
+\[
+  \dot{x} = \M{0 & 1 \\ 0 & 0}\M{x_1 \\ x_2} + \M{0 \\ 1}u
+.\] 
+
+\SUBTASK{b}{Newton discrete state-space}
+
+The system $\dot{x} = Ax$ 
+

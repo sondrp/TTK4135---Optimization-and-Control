@@ -1,0 +1,51 @@
+%%% QUESTION %%%
+
+\begin{problem}{2: MPC and input blocking}
+
+Plant model is given by 
+\begin{align*}
+  x_{t+1} &= \M{0 & 0 & 0 \\ 0 & 0 & 1 \\ 0.1 & -0.79 & 1.78}x_t + \M{1 \\ 0 \\ 0.1}u_t \\ 
+  y_t &= \M{0 & 0 & 1}x_t
+\end{align*}
+
+where $y_t$ is a measurement. The process has been at the origin $x_t = 0$, $u_t = 0$ for a while, but at $t = -1$ a 
+disturbance moved the process so that $x_0 = \M{0 & 0 & 1}^{\top}$. We wish to solve a finite horizon ($N < \infty$) optimal 
+control problem with the cost (or objective) function 
+\[
+  f(y_1,\dots,y_N, u_0,\dots,u_{N-1}) = \sum_{t=0}^{N-1} \{y_{t+1}^2 + ru_t^2\} ,\ r > 0
+.\] 
+
+Use r = 1, N = 30. Input constraint:
+\[
+  -1 \leq u_t  \leq 1 ,\ t \in \M{0, N-1}
+.\] 
+
+Assume that full state information is available for control. 
+
+\medskip (a) Solve the open loop problem.
+
+\medskip (b) REduce the number of control variables $u_t$ by dividing the time horizon into 6 
+block of equal length (5 time steps each) and require $u$ to be a constant on each of these blocks. 
+We will do thi sby modifying $A_{eq}$ in equation
+\[
+  A_{eq}z = b_{eq}
+\] 
+
+which represents the system equations (27a) for all the time instants on the horizon. That is, the
+right part of the matrix $A_{eq}$ will have fewer columns. Give the structure of the modified $A_{eq}$ and state how many columns the right part now has. 
+
+\medskip (c) We now use a better input parametrization: we use the same number of blocks but the input blocks are now of increasing lengths: 1, 1, 2, 4, 8, and 14 time steps. 
+Does the parametrization change the number of iterations quadprog uses to find the solution?
+
+\medskip (d) Solve MPC Problem 2 (b), Exercise 5 and solve with this plant model.
+
+\medskip (e) Modify your code to solve the same MPC problem as above, but with the two input blocking 
+schemes from problem (b) and (c).
+
+\medskip (f) What is the effect of using input blocking with MPC? Why do we choose blocks of increasing length? 
+Discuss based on the results obtained above. 
+
+
+\end{problem}
+
+%%% SOLUTION %%%

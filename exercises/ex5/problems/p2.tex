@@ -1,0 +1,41 @@
+%%% QUESTION %%%
+
+\begin{problem}{2: Model Predictive Control}
+  Use the same model as Problem 1
+  
+  \medskip (a) Provide a short explanation of the MPC principle.
+  
+  \medskip (b) Assume that full state measurements are available. 
+  Solve this with control horizon length N = 30. Compare with earlier results.
+  
+  \medskip (c) Use a shorter time horizon and comment on differences. 
+  
+  \medskip (d) Assume that the model from task 1 is imperfect. The A matrix is correct, but B is 
+  multiplied with 0.98 (2\% less force from the actuators than expected). 
+  
+  Run the MPC with the real model as plant model in the control design and modified system in the simulation. Compare
+  output $y_t$ and input $u_t$ with the ones obtained earlier.
+
+\end{problem}
+
+%%% SOLUTION %%%
+
+\SUBTASK{a}{MPC principle}
+
+Model predictive control (MPC) is a control strategy where the current control action is determined by solving a finite-horizon open-loop optimal control problem at each sampling instant. The optimization uses the plant's current state as the initial condition and generates an optimal control sequence. Only the first control input from this sequence is applied to the plant, and the process repeats at the next time step.
+
+\SUBTASK{b}{Using full state information}
+
+The controller manages the model/plant mismatch effectively when the force is only 2\%
+less than expected. However, further reducing this margin will cause issues. On the other hand, a force that exceeds the expected value is not problematic.
+
+\SUBTASK{c}{Shorter time horizon}
+
+Using a shorter time horizon in MPC typically leads to more reactive but potentially less optimal control. The controller may struggle with long-term planning, leading to more aggressive corrections and potentially higher control effort. Compare the results with 
+N=30 to observe how stability, tracking performance, and control smoothness are affected.
+
+\SUBTASK{d}{Imperfection}
+
+introducing model mismatch by scaling 
+B down by 2\% will test the controller's robustness. The MPC will be designed assuming the original model, but the simulation will run with the modified dynamics. Compare the output y
+A well-tuned MPC should handle small deviations well, but a noticeable performance degradation or steady-state error may appear.

@@ -1,0 +1,36 @@
+%%% QUESTION %%%
+
+\begin{problem}{1: The Rosenbrock function}
+
+Compute the gradient $\nabla f(x)$ and Hessian $\nabla ^2 f(x)$ of the Rosenbrock function
+\[
+  f(x) = 100(x_2 - x_1^2)^2+ (1-x_1)^2
+.\] 
+
+Show that $x^* = (1,1)^{\top}$ is the only local minimizer of this function, and that the Hessian matrix at that point 
+is positive definite. 
+
+\end{problem}
+
+%%% SOLUTION %%%
+
+\[
+  \nabla f(x) = \M{200(x_2-x_1^2)(-2x_1)-2(1-x_1) \\ 200(x_2-x_2^2)} = \M{-400(x_1x_2-x_1^3) + 2x_1-2 \\ 200(x_2-x_1^2)}
+.\] 
+
+\[
+  \nabla ^2 f(x) = \M{-400x_2+1200x_1^2+2 & -400x_1 \\ -400x_1 & 200}
+.\] 
+
+$\nabla f(x) = 0$ at the points where x is a local minimizer. We have that
+\begin{itemize}
+  \item $200(x_2-x_1^2) = 0 \implies x_2 = x_1^2$
+  \item $-400(x_1x_2-x_1^3) + 2x_2 - 2 = 0 \implies -400(x_1^3 - x_1^3) + 2x_1 - 2 = 0 \implies x_1 = 1 = x_2$
+\end{itemize}
+
+So $x_1 = x_2 = 1$ is the only minimizer for this function. 
+
+The Hessian matrix at that point is $\M{802 & -400 \\ -400  & 200}$. 
+
+Since the top left element is positive and the determinant is positive ($802*200-400*400$), the Hessian is positive definite. 
+

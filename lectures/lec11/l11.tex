@@ -1,0 +1,98 @@
+\documentclass{article}
+
+\input{../../preamble.tex}
+
+\lstset{basicstyle=\ttfamily, escapeinside={(*@}{@*)}}
+
+\Lecture{Lecture 11: Practical use of MPC: Output feedback, target calculation and offset-free control}{Feb 13, 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{MPC controller - state feedback}
+
+MPC controller algorithm:
+
+\lstset{basicstyle=\ttfamily}
+\begin{lstlisting}
+1. For t = 0, 1, 2, ..., (*@$\infty$@*) do
+2.  Determine (*@$x_t$@*)
+3.  Solve open-loop opt. prob. with initial state (*@$x_0 = x_t$@*)
+4.    (*@$\rightarrow u_0, u_1, u_2,\dots,u_{N-1}$@*)
+5.  Set (*@$u_t = u_0$@*)
+6. end
+\end{lstlisting}
+
+\begin{center}
+  \incfig{block}{0.4}
+\end{center}
+
+Observation: MPC controller is non-linear state feedback. We determine $x_t$ with measurements, or state estimate.
+
+\paragraph{Reference tracking (regulation)}
+
+Say that we have a plant that we want to design an MPC for. A typical control objective is that we want controlled variables $\gamma_t \rightarrow \gamma_{ref}$ where
+$\gamma_t = H x_t$. Note: Controlled variables $\gamma_t = H x_t$ may be different from measured variables $y_t = Cx_t$.
+
+\medskip Steady state:
+\begin{align*}
+  x_s      & = Ax_s + Bu_s \rightarrow x_s = (I - A)^{-1}Bu_s \\
+  \gamma_s & = Hx_s = H(I - A)^{-1}Bu_s                       \\
+\end{align*}
+
+Example:
+\begin{align*}
+  A        & = \M{0.8  & 0.4      \\ -0.1 & 0.9} ,\ B = \M{1 & 0.5 \\ 0 & 2},\  H = \M{1 & -1}  \\
+  \gamma_s & = \M{3.33 & 8.33}u_s
+\end{align*}
+
+\medskip Observe: (i) Input constraints limit possible $\gamma_s$. $\M{0 \\ 0} \leq u \leq \M{1 \\ 1} \rightarrow 0 \leq \gamma_s  \leq 11.66$. With input constraints,
+we cannot control our system to wherever we want. (ii) Several $u_s$ give same $\gamma_s$ (in this case). If $u_s = \M{0 \\ 0.24} \rightarrow \gamma_s = 2.0$. Also, $u_s = \M{0.17 \\ 0.17}  \rightarrow \gamma_s = 2.0$
+
+\medskip The solution to this problem is target calculation. It can be formulated as a QP.
+\begin{align*}
+  \min\qquad        & \frac{1}{2}u_s^{\top}R_s u_s    \\
+  \text{s.t.}\qquad & x_s = Axs + Bu_s                \\
+                    & Hx_s = \gamma_{ref}             \\
+                    & x^{low}  \leq x_s \leq x^{high} \\
+                    & u^{low} \leq u_s  \leq u^{high}
+\end{align*}
+
+\section{Offset-free control}
+
+Also known as integral control. This is a sort of robust control where you remove the effect of unknown 
+disturbances. This i sthe rolw of `I' in PID control, which we don't have in MPC so far.
+An unmodelled disturbance $d_t$ will give an offset in the controlled variable $\gamma_t$. Model with disturbance
+\begin{align*}
+  x_{t+1} &= Ax_t + Bu_t + A_d d_t \\ 
+  y_t &= Cx_t + C_d d_t
+\end{align*}
+
+The disturbance model:
+\begin{align*}
+  d_{t+1} & = d_t 
+\end{align*}
+
+Idea: Augment the model in MPC to get
+\begin{align*}
+  \M{x_{t+1} \\ d_{t+1}} &= \M{A & A_d  \\ 0 & I}\M{x_t \\ d_t} + \M{B \\ 0}u_t \\ 
+  y_t &= \M{c & c_d}\M{x_t \\ d_t} 
+\end{align*}
+
+Offset-free MPC: 
+\begin{itemize}
+  \item Use state estimator with the above model to estimate $\hat{x_t} and \hat{d_t}$
+  \item Use the model above as model in MPC. 
+\end{itemize}
+Note:
+\begin{itemize}
+  \item Requires $(A_{a_1}, C_a)$ to be observable. A practical requirement to solve the problem of having
+  to measure too many disturbances: $\dim( \hat{d_t}) \leq \dim(y_t)$
+  \item Typical industrial practice: $A_d = 0,\  C_d = I$ (`bias update'). OFten works well, especially when 
+  the process is slow. But it does not always work. 
+  The advantage of this method is that you do not need a state estimator. 
+  \item Target calculation must be modified to depend on $\hat{d}$. 
+\end{itemize}
+
+\end{document}

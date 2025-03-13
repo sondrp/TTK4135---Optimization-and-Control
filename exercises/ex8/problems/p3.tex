@@ -1,0 +1,35 @@
+%%% QUESTION %%%
+
+\begin{problem}{3: Search direction}
+Consider the function 
+\[
+  f(x) = (x_1+x_2^2)^2
+.\] 
+At the point $x_k^{\top} = (1, 0)$ we consider the search direction $p_k^{\top} = (-1, 1)$. Show that $p_k$ is a descent direction, and find all minimizers of 
+\[
+  \min_{\alpha > 0} f(x_k + \alpha p_k)
+.\] 
+\end{problem}
+
+%%% SOLUTION %%%
+
+\[
+  \nabla f(x) = \M{2(x_1+x_2^2) \\ 4x_2(x_1+x_2^2)}
+.\] 
+
+\[
+  \nabla f(1, 0) = \M{2 \\ 0}
+.\] 
+
+Given $p_k^{\top} = (-1, 1)$, we get that
+\[
+  \nabla f(1, 0) ^{\top}p_k = \M{2  & 0}\M{-1 \\ 1} = -2
+.\] 
+
+Since the result is negative, we have a descent direction. 
+
+
+\medskip Define $x(\alpha) = x_k + \alpha p_k = \M{1 \\ 0} + \alpha \M{-1 \\ 1} = \M{1 - \alpha \\ \alpha}$. Using this in f(x) gives $f(1-\alpha, \alpha) = ((1- \alpha) + \alpha^2)^2 := g(\alpha)$.
+\[
+  \frac{dg}{d\alpha} = 2(1-\alpha + \alpha^2) \times (-1+ 2\alpha) = 0 \implies \alpha = \frac{1}{2}
+.\] 

@@ -1,0 +1,127 @@
+%%% QUESTION %%%
+
+\begin{problem}{1: Open loop control and QP}
+
+A model of an inverted pendulum on a cart, linearized about the upright position of the pendulum and discretized
+using forward Euler with sampling time 0.1 s, is
+\begin{align*}
+  x_{t+1} & = \M{1 & 0.1 & 0 & 0 \\ 0 & 0.9818 & 0.2673 & 0 \\ 0 & 0 & 1 & 0.1 \\ 0 & -0.0455 & 3.1182 & 1}x_t + \M{0 \\ 0.1818 \\ 0 \\ 0.4545}u_t \\
+  y_t     & = \M{1 & 0   & 0 & 0 \\ 0 & 0 & 1 & 0}x_t
+\end{align*}
+
+The states are cart position and velocity, pendulum angle and angular velocity. The input is $u_tq$ is force pushing the cart. The measurements are position and angle, and wish to use this to control
+the inverted pendulum.
+
+\medskip
+At t = -1 the pendulum is pushed ($x_0 = \M{0 & 0 & 0.1 & 0}^{\top}$).
+We wish to solve a finite horizon ($N < \infty$) open loop optimal control problem with the cost function
+\[
+  f(y_{1,1},\dots,y_{n,N}, y_{2, 1},\dots,y_{2,N}, u_0,\dots,u_{N-1}) = \sum_{t=0}^{N-1}\{100y_{1,t+1}^2 + 10y_{2, t+1}^2 + ru_t^2\},\ r > 0
+  .\]
+
+where $y_{1,t}$ is element 1 on $y_t$. Use r=1 and N = 30.
+
+\medskip (a) Is the equilibrium of the system stable?
+
+\medskip (b) What are the dimensions of $x_t$ and $u_t$? Define Q and R appropriately, and rewrite the cost function as
+\[
+  f(x_1,\dots,x_N, u_0,\dots,u_{N-1}) = \frac{1}{2} \sum_{t = 0}^{N-1} \{x_{t+1}^{\top}Qx_{t+1} + u_t^{\top}Ru_t\}
+  .\]
+
+Next, write the cost function as
+\[
+  f(z) = \frac{1}{2}z^{\top}Gz
+  .\]
+where $z = \M{x_1^{\top},\dots,x_N^{\top},u_0^{\top},\dots,u_{N-1}^{\top}}^{\top}$
+
+\medskip (c) Is the minimization problem with the new objective function and original constraints convex, strictly convex, or non-convex?
+
+\medskip (d) We will now cast the optimal control problem as the equality-constrained QP
+\begin{align*}
+  \min\qquad        & f(z) = \frac{1}{2} z^{\top}Gz \\
+  \text{s.t.}\qquad & A_{eq}z = b_{eq}
+\end{align*}
+
+with z from above.
+
+\medskip Find $A_{eq}$ and the vector $b_{eq}$.
+
+\medskip Set up the KKT system equations and solve. Plot $y_t$ and $u_t$.
+
+\medskip (e) We call the sequence $u_0, u_1,\dots,u_{N-1}$ an optimal control sequence. However, this form of control is open loop.
+Why do we cann this open-loop control? What are the advantages of including feedback and how can this be accomplished?
+
+\medskip (f) Solve the optimization problem posed in (d) using quadprog in MATLAB. Plot $y_t$ and $u_t$ and compare results with those from (d).
+How many iterations does quadprog use? Try different values of r. Plot these too.
+
+\medskip (g) We now add the input constraint
+\[
+  -1 \leq u_t \leq 1 \qquad t \in [0, N-1]
+  .\]
+
+Formulate this as a constraint on z and solve with quadprog. Plot results and compare with above.
+How many iterations does quadprog use to find the solution?
+
+\end{problem}
+
+%%% SOLUTION %%%
+
+\SUBTASK{a}{Stability}
+
+If left uncontrolled, the pendulum's upright position is inherently unstable.
+The eigenvalues of matrix A are 1, 0.99, 0.44, and 1.56. Since some have a magnitude greater than 1, the system is mathematically confirmed to be unstable.
+
+\SUBTASK{b}{Dimensions}
+
+The dimensions of $x_t$ and $u_t$ are $n_x = 4$ and $n_u = 1$. The cost function can be written
+\[
+  f(x_1,\dots,x_N, u_0,\dots,u_{N-1}) = \frac{1}{2} \sum_{t=0}^{N-1}\{x_{t+1}^{\top}Qx_{t+1}+ u_t^{\top}Ru_t\}
+  .\]
+where Q and R are
+\[
+  Q = 2 \M{100 & 0 & 0 & 0 \\ 0 & 0 & 0 & 0 \\ 0 & 0 & 10 & 0 \\ 0 & 0 & 0 & 0},\  R = 2r = 2
+  .\]
+
+By defining G as
+\[
+  G = \M{Q  & 0 & \cdots & \cdots & \cdots & 0 \\
+    0 & \ddots & \ddots &  &  & \vdots \\ \vdots & \ddots & Q & \ddots &  & \vdots \\ \vdots &  & \ddots & R & \ddots & \vdots \\ \vdots  &  &  & \ddots & \ddots & 0 \\ 0 &  \cdots & \cdots & \cdots & 0 & R}
+\]
+
+we can write the objective as 
+\[
+  f(z) = \frac{1}{2}z^{\top}Gz
+.\] 
+
+\SUBTASK{c}{Convexity}
+
+The QP problem is convex since G is positive semidefinite, which forllows from Q being positive semidefinite and R positive definite. 
+
+\medskip Convexity depends on Q and R, but not on A, B, C, or N. 
+
+\medskip The problem would have been strictly convex if both Q and R were positive definite. 
+
+\SUBTASK{d}{Solve the problem}
+
+The KKT system is
+\[
+  \M{G & -A_{eq}^{\top} \\ A_{eq} & 0}\M{z^* \\ \lambda^*} = \M{0 \\ b_{eq}}
+.\] 
+
+with G, $A_{eq}$, z and $b_{eq}$ being specified above; $\lambda$ is the usual multiplier vector. 
+
+\SUBTASK{e}{Open-loop control}
+
+The computed sequence of control inputs is considered optimal, but since no measurements are taken after 
+k=0, there is no state feedback in the control process. This is known as open-loop control. The main issue with this approach is that no model is ever 100% accurate, meaning we cannot perfectly predict future behavior. As a result, the predicted state trajectory will deviate from the actual one due to model inaccuracies and external disturbances.
+
+One way to incorporate feedback is to take a new measurement at each time step, recalculate an optimal control sequence, and then apply only the first control input before repeating the process. Since a new optimal sequence is computed at every step, this approach significantly reduces the impact of model inaccuracies and helps detect disturbances through continuous measurements.
+
+\SUBTASK{f}{Quadprog}
+
+Solbing with quadprog should give the same 
+
+\SUBTASK{g}{New input constraints}
+
+Ok this exercise was hard I'll get back to it later
+

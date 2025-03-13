@@ -1,0 +1,67 @@
+%%% QUESTION %%%
+
+\begin{problem}{2: The Newton Direction}
+
+Consider the model function $m_k$ based on the second-order Taylor approximation
+\[
+  m_k(p) = f_k + p^{\top} \nabla f_k + \frac{1}{2}p^{\top}\nabla ^2 f_k p \approx f(x_k + p)
+  .\]
+
+\medskip (a) Derive the expression for the Newton direction
+\[
+  p_k^{N} = -(\nabla ^2 f_k)^{-1} \nabla f_k
+  .\]
+using the model function $m_k$. The Newton direction is the direction that minimized $m_k(p)$.
+
+\medskip (b) Assume that $\nabla ^2 f_k$ is not positive definite. In this case, is the Newton-direction $p_k^{N}$ a descent direction? Is it even defined?
+
+\medskip (c) Given an unconstrained minimization problem with objective function
+\[
+  f(x) = \frac{1}{2}x^{\top}Gx + c^{\top}x
+  .\]
+with $G = G^{\top} > 0$ and $x  \in \mathbb{R}^{n}$. Show that an iteration algorithm based on Newton direction (i.e., $x_{k+1} = x_k + p_k^{N}$) always converges to the optimum in \textit{one step}.
+
+\end{problem}
+
+%%% SOLUTION %%%
+
+\SUBTASK{a}{Derive Newton direction}
+
+\begin{align*}
+  \frac{\partial m_k}{\partial p} & = 0                                                                             \\
+                                  & = \nabla f_k + \frac{1}{2}(\nabla ^2 f_k)^{\top}p + \frac{1}{2} \nabla ^2 f_k p \\
+                                  & =\nabla f_k + \nabla ^2 f_k p                                                   \\
+  \implies p                      & = -(\nabla ^2 f_k)^{-1} f_k
+\end{align*}
+
+Here we use that $(\nabla ^2 f_k)^{\top}p = \nabla ^2 f_k p$ (Symmetric Hessian).
+
+\SUBTASK{b}{When Hessian is not pd}
+
+The Newton direction is a descent direction if it satisfies:
+\[
+  \nabla f_k^{\top}p_N^{\top} < 0
+  .\]
+Expanding with the expression for $p_N^{k}$:
+\[
+  \nabla f_k^{\top}(-(\nabla ^2f_k)^{-1}\nabla f_k) = -\nabla f_k^{\top}(\nabla ^2 f_k)^{-1}\nabla f_k
+  .\]
+
+If $\nabla ^2f_k$ is positive definite, then $(\nabla ^2f_k)^{-1}$ is also positive defininte. This ensures that the quadratic form is strictly negative, making $p_n^{k}$ a descent direction.
+
+\medskip However, if $\nabla ^2 f_k$ is not positive definite, then $(\nabla ^2 f_k)^{-1}$ is not well defined, and could be a direction that is not descending.
+
+
+\medskip $p_N^{k}$ is defined if $\nabla ^2 f_k$ has negative eigenvalues. Otherwise it is not defined.
+
+\SUBTASK{c}{Newton convergence}
+
+The Newton direction is given by $p_k^{N} = -(\nabla ^2 f_k)^{-1}\nabla f_k$. Using $\nabla f(x_k) = Gx_k + c$ and $\nabla ^2 f_k = G$ gives
+\begin{align*}
+  p_k^{N} & = -G^{-1}(Gx_k + c) \\
+          & = -x_k - G^{-1}c
+\end{align*}
+
+The next step is now $x_{k+1} = x_k + p_k^{N} = x_k - x_k - G^{-1}c = -G^{-1}c$.
+
+This is the optimal solution. Setting $\nabla f(x) = 0$ gives $Gx^* + c = 0 \implies x^* = -G^{-1}c$. 

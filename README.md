@@ -40,5 +40,32 @@ Work from the course Optimization and Control.
       <td><a href="pdf/l10.pdf">07.02</a></td>
       <td><a href="pdf/Ex4.pdf">Exercise 4</a></td>
     </tr>
+    <tr>
+      <td>Week 7</td>
+    </tr>
+    <tr>
+      <td>Week 8</td>
+      <td><a href="pdf/l11.pdf">13.02</a></td>
+      <td><a href="pdf/l12.pdf">14.02</a></td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Week 9</td>
+      <td><a href="pdf/l13.pdf">20.02</a></td>
+      <td><a href="pdf/l14.pdf">21.02</a></td>
+      <td>-</td>
+    </tr>
+    <tr>
+      <td>Week 10</td>
+      <td>-</td>
+      <td>-</td>
+      <td><a href="pdf/Ex8.pdf">Exercise 8</a></td>
+    </tr>
+    <tr>
+      <td>Week 11</td>
+      <td>-</td>
+      <td>-</td>
+      <td>-</td>
+    </tr>
   </tbody>
 </table>

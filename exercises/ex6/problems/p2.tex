@@ -1,0 +1,30 @@
+%%% QUESTION %%%
+
+\begin{problem}{2: Infinite-Horizon Linear-Quadratic control}
+
+Consider the discrete-time system
+\[
+  x_{t+1} = 3x_t + 2u_t,\ \qquad x_t \in\mathbb{R}^{1},\ u_t \in \mathbb{R}^{1}
+\] 
+
+and the cost function 
+\[
+  f^{\infty}(z) = \frac{1}{2}\sum_{t=0}^{\infty} \{qx_{t+1}^2 +u_t^2 \},\  q>0
+.\] 
+
+In this question, you should do calculations by hand. 
+
+\medskip (a) SHow that the stationary Riccati equation is 
+\[
+  p = q + \frac{a^2pr}{r+b^2p}
+.\] 
+
+Set q = 2 and find the solution.
+
+\medskip (b) What is the optimal feedback $u_t = -kx_t$?
+
+\medskip (c) Is the closed loop with this controller stable?
+
+\end{problem}
+
+%%% SOLUTION %%%
