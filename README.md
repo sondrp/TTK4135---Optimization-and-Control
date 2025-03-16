@@ -51,14 +51,14 @@ Work from the course Optimization and Control.
     </tr>
     <tr>
       <td>Week 9</td>
-      <td><a href="pdf/l13.pdf">20.02</a></td>
-      <td><a href="pdf/l14.pdf">21.02</a></td>
+      <td><a href="pdf/l13.pdf">27.02</a></td>
+      <td><a href="pdf/l14.pdf">28.02</a></td>
       <td>-</td>
     </tr>
     <tr>
       <td>Week 10</td>
-      <td>-</td>
-      <td>-</td>
+      <td>no lecture</td>
+      <td><a href="pdf/l15.pdf">7.03</a></td>
       <td><a href="pdf/Ex8.pdf">Exercise 8</a></td>
     </tr>
     <tr>

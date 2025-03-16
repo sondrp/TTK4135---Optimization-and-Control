@@ -1,0 +1,117 @@
+\documentclass{article}
+
+\input{../../preamble.tex}
+
+\Lecture{Lecture 16: Calculating derivatives and Derivative-free optimization}{March 13, 2025}
+
+\begin{document}
+
+\maketitle
+
+\section{Intro}
+
+The methods we have seen so far all need gradients. It is therefore worth it to see how to find these
+derivatives as efficiently as possible. For small problems with 5 variables or 10 to 100 variables it is quite easy. But 
+when you have a million variables, it becomes harder. Now we have to put some thought into it. 
+
+\paragraph{Four ways of finding derivatives}- 
+\begin{itemize}
+  \item By hand 
+  \begin{itemize}
+    \item Time consuming 
+    \item Error prone for large problems
+  \end{itemize}
+  \item Symbolic differentiation (CAS - computer algebra systems)
+  \begin{itemize}
+    \item  GeoGebra, Maple, \dots
+    \item Expensive to evaluate, cumbersome to maintain.
+  \end{itemize}
+  \item Numerical differentiation
+  \begin{itemize}
+    \item Easy to implement, but may have low accuracy
+  \end{itemize}
+  \item Automatic (Algorithmic) Differentiation (AD)
+  \begin{itemize}
+    \item Best option when it can be done
+    \item Easy to implement using the right software
+    \item Exact up to machine precision
+  \end{itemize}
+\end{itemize}
+
+\paragraph{Numerical differentiation}-
+
+\medskip Single variable:
+\[
+  f: \mathbb{R} \rightarrow \mathbb{R} \qquad \frac{\partial f}{\partial x} \approx \frac{f(x + \epsilon) - f(x)}{\epsilon}    
+.\]
+
+Multi-variable (like objective functions) 
+\[
+  f: \mathbb{R}^{n} \rightarrow \mathbb{R} \qquad \text{directional derivative}
+\] 
+\[
+  \nabla f(x)^{\top}p = \frac{\partial}{\partial \alpha} f(x + \alpha p) \big|_{\alpha = 0} \approx \frac{f(x+ \epsilon p) - f(x)}{\epsilon}
+.\] 
+
+If we want to find the partial derivative of f,
+
+\[
+  \frac{\partial f}{\partial x_i} \approx \frac{f(x + \epsilon e_i) - f(x)}{\epsilon}
+.\] 
+
+This is the special case of finding direcitonal derivative along one of the coordinates. 
+
+
+To get the full gradient $\nabla f(x)$, iterate over all the coordinates. 
+
+\section{Theoretical accuracy of numerical differentiation}
+
+$f: \mathbb{R}^{n} \rightarrow \mathbb{R}$, assume $||\nabla ^2 f(x)|| \leq L$
+
+\medskip Taylor: 
+\begin{align*}
+  &|f(x+p) - f(x) - \nabla f(x)^{\top}p| = | \frac{1}{2}p^{\top} \nabla ^2 f(x+tp) p| \\ 
+  & \leq \frac{1}{2}||\nabla ^2 f(x+tp)|| \times ||p||^2 \leq \frac{L}{2}||p||^2   
+\end{align*}
+
+Let $p = \epsilon e_i$:
+\begin{align*}
+  &f(x+\epsilon e_i) - f(x) - \epsilon \nabla f(x)^{\top}e_i|  \leq \frac{L}{2}\epsilon ^2 \\ 
+  &| \frac{f(x+\epsilon e_i) - f(x)}{\epsilon} - \frac{\nabla f}{\nabla x_i}| \leq \frac{L}{2}\epsilon  \\ 
+\end{align*}
+
+In theory, we can just pick an $\epsilon$ small enough to get any accuracy we want (not in practice!). 
+These difference schemes can be cooked up to give better accuracy for the same $\epsilon$. For example, central differences
+is much better than just one-sided difference. 
+
+\medskip The limit on how small you can make $\epsilon$ and still improve accuracy is determined by how small the numbers the computer can 
+represent. A normal limit would be around $10^{-8}$ before you would run into problems. 
+
+
+\paragraph{Approximating the Hessian}- 
+
+\medskip In many cases, the gradient is available, but not the Hessian. We can use finite differences on the gradient:
+\[
+  \nabla ^2 f(x) p \approx \frac{\nabla f(x + \epsilon p) - \nabla f(x)}{\epsilon}
+.\]   
+
+If the gradient is not available, use finite differences `twice' for Hessian. But this is terrible, so use Quasi-Newton instead. 
+
+\section{Automatic (algorithmic) differentiation (AD)}
+
+These are software tools that automatically computes derivatives of your code. The principle being used is automated chain rule. 
+It is possible to calculate derivatives forward and in reverse. The reverse mode sounds strange, but turns out to be efficient in some
+important applications. 
+
+\medskip Today AD is implemented using operator overloading. It requires that our implementation is differentiable. These methods are 
+used in all machine learning tools. 
+
+\paragraph{AD}- forward and reverse
+
+\medskip In forward mode, both $x_i$ and $\nabla x_i$ are calculated by forward traversing computation graph. 
+\[
+  f(x_1, x_2, x_3) = x_1x_2+x_3 \cos{(x_1)} + x_3
+.\] 
+
+
+\end{document}
