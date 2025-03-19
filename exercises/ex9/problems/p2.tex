@@ -1,0 +1,36 @@
+%%% QUESTION %%%
+
+\begin{problem}{2: Unconstrained optimization using finite differences}
+
+  Optimize the Rosenbrock function using Newton's method by using finite differences instead of exact derivatives. 
+
+\end{problem}
+
+%%% SOLUTION %%%
+
+The hard initial guess: $x_0 = \M{-1.2 & 1}^{\top}$ looks reasonable. 
+
+\begin{minipage}[c]{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/2a1.png}
+\end{minipage}
+\hfill
+\begin{minipage}[c]{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/2a2.png}
+\end{minipage}
+
+The easy point ($\M{1.2 & 1.2}^{\top}$) seems to have some issue: 
+
+\begin{minipage}[c]{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/2a3.png}
+\end{minipage}
+\hfill
+\begin{minipage}[c]{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/2a4.png}
+\end{minipage}
+
+but I am not completely sure why. The number of iterations here is wild. I'll have to look into 
+what is causing this. 

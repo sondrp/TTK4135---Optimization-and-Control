@@ -65,7 +65,7 @@ Work from the course Optimization and Control.
       <td>Week 11</td>
       <td>-</td>
       <td>-</td>
-      <td>-</td>
+      <td><a href="pdf/Ex9.pdf">Exercise 9</a></td>
     </tr>
   </tbody>
 </table>

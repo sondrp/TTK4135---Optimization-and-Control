@@ -1,0 +1,81 @@
+%%% QUESTION %%%
+
+\begin{problem}{3: Nelder-Mead}
+
+  This problem will minimize the Rosenbrock function using the Nelder-Mead algorithm (a derivative-free method). 
+  
+  \medskip (a) The Nelder-Mead method needs n+1 starting points for an n-dimensional function. What are
+  the conditions on the n+1 initial points? Give an example of an invalid set of starting points. Describe in geometric terms 
+  the difference between valid and invalid sets of starting points for a function of two variables.
+  
+  \medskip (b) Study the code for Nelder Mead. Run the provided with different initial points. 
+
+  \medskip (c) Use $x = \M{1.2 & 1.2}^{\top}$ as the initial point (this point is close to the optimum $x^* = \M{1 & 1}^{\top}$) and run the algorithm. 
+  Then start the algorithm from $x = \M{-1.2 & 1}^{\top}$, which is a more difficult starting point. Study the output and the plots. Compare results with Problem 1. 
+  
+  \medskip (d) Show that if $f$ is a convex function, the shrinkage step in the Nelder-Mead simplex method will not increase the average value of the 
+  function over the simplex vertices. 
+\end{problem}
+
+%%% SOLUTION %%%
+
+\SUBTASK{a}{Starting points}
+
+The Nelder-Mead method requires n+1 starting points for an n-dimensional function. These points must satisfy the following 
+conditions:
+\begin{itemize}
+  \item They must form a non-degenerate simples: In n dimensions, an n-dimensional simples is a set of n+1 independent points. 
+  This ensures that the simplex spans an n-dimensional space and can be properly contracted, expanded, or reflected during the optimization process. 
+  \item No collinear (or coplanar in higher dimensions) points: If the points lie on the same line in 2D (or on the same plane in 3D), the algorithm can't explore the space 
+  effectively. 
+\end{itemize}
+
+An example of invalid starting points for a function of two variables could be $(0,0)$, $(1,1)$, (2,2)
+
+\medskip The geometric difference between valid and ivalid sets is that a valid set forms a shape with the maximal number of dimensions. 
+An invalid set uses points that lie on the same line in 2D, or on the same plane in 3D.
+
+\SUBTASK{b}{Running Nelder-Mead}
+
+Here is an example from starting point $\M{0.34 & 0.66}^{\top}$.
+
+\begin{minipage}[c]{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/3b1.png}
+\end{minipage}
+\hfill
+\begin{minipage}[c]{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/3b2.png}
+\end{minipage}
+
+The solution is reached in a little over 60 iterations. 
+
+\SUBTASK{c}{Comparison with previous methods}
+
+The easy point $\M{1.2 & 1.2}^{\top}$:
+
+\begin{minipage}[c]{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/3c1.png}
+\end{minipage}
+\hfill
+\begin{minipage}[c]{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/3c2.png}
+\end{minipage}
+
+The hard point $\M{-1.2 & 1}^{\top}$:
+
+\begin{minipage}[c]{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/3c3.png}
+\end{minipage}
+\hfill
+\begin{minipage}[c]{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/3c4.png}
+\end{minipage}
+
+For some reason the last iteration from the difficult starting point just goes to (0,0). Other than that 
+they are almost the same as the other methods in number of iterations at least. 

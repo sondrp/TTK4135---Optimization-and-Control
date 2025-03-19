@@ -1,0 +1,76 @@
+%%% QUESTION %%%
+
+\begin{problem}{1: Unconstrained Optimization}
+
+  In this problem we will find the minimizer of the Rosenbrock function
+  \[
+    f(x) = 100(x_2 - x_2^2)^2 + (1-x_1)^2
+  .\] 
+
+  using linesearch optimization with the steepest descent, Newton and quasi-Newton (BFGS) directions. 
+  
+  \medskip (a) Implement the steepest descent algorithm using the backtracking linesearch method. Use initial guess $x_0 = \M{1.2 & 1.2}^{\top}$ and initial step length $\alpha_0 = 1$.
+  
+  \medskip (b) Using the code in (a) as starting point, implement linesearch optimization with the Newtin direction 
+  and backtracking linesearch. Use $x_0 = \M{1.2 & 1.2}^{\top}$ and $x_0 = \M{-1.2 & 1}^{\top}$, with $\alpha_0 = 1$. 
+  
+  \medskip (c) Modify the code to use the BFGS method instead of exact Newton direction. 
+  
+  \medskip (d) Study the plots that show $\alpha_k$ at each iteration of k for the Newton and BFGS algorithms. 
+  How common is a step length of $\alpha_k = 1$? In particular, what is the step length close to the solution? How does
+  this agree with convergence-rate theory?
+
+\end{problem}
+
+%%% SOLUTION %%%
+
+\SUBTASK{a}{Steepest descent}
+
+Here are the results of running OptimizeRosenbrock.m with steepest descent: 
+
+\begin{minipage}[c]{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/1a1.png}
+\end{minipage}
+\hfill
+\begin{minipage}[c]{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/1a2.png}
+\end{minipage}
+
+\SUBTASK{b}{Newton}
+
+Newton with the easy point: 
+
+\begin{minipage}[c]{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/1b1.png}
+\end{minipage}
+\hfill
+\begin{minipage}[c]{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/1b2.png}
+\end{minipage}
+
+Newton with the hard point: 
+
+\begin{minipage}[c]{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/1b3.png}
+\end{minipage}
+\hfill
+\begin{minipage}[c]{0.5\textwidth}
+  \centering
+  \includegraphics[width=0.9\textwidth]{figures/1b4.png}
+\end{minipage}
+  
+\SUBTASK{c}{BFGS}
+
+Come back to this one 
+
+\SUBTASK{d}{Convergence}
+
+Step length of $\alpha_k = 1$ is expected for Newton and BFGS when getting closer to the solution.
+This is because they approximate a quadratic equation, and will take a full step right to the solution. This is not 
+true when far away from the optimal point, because the Hessian (or the approximation in BFGS) might not represent local curvature well. 
+At these points the search needs to adjust $\alpha_k$.
